@@ -1,6 +1,5 @@
 from invoke import run
 from pathlib import Path
-from datetime import datetime
 import glob
 import sqlite3
 from log import logger
@@ -27,9 +26,9 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
 
 
 
-def getCurrentTime():
-    current_time =  datetime.today().strftime('%m-%d-%H:%M')
-    return current_time
+# def getCurrentTime():
+#     current_time =  datetime.today().strftime('%m-%d-%H:%M')
+#     return current_time
 
 
 # def getDatadir():
@@ -71,7 +70,7 @@ def getFilesInDir(dir:str,commonality:str) -> list:
 
 def downloadLinksInFile(file_path:str):
     import config
-    cmd = f"{config.aria2c_path} -i {file_path} "
+    cmd = f"{config.aria2c_command} -i {file_path} "
     invokeCommand(cmd)
 
 

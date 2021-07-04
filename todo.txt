@@ -1,0 +1,5 @@
+fix waybackdownloader  potenial bug
+
+fix jsfile entropy .py
+
+fix AllInOne  input   one single domain   and   one file with multiple domains  check AllInOne logic

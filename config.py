@@ -1,19 +1,20 @@
-import utils
+from datetime import datetime
 import pathlib
+from dotenv import load_dotenv
+import os
 
-
-
+load_dotenv()
 
 
 # 路径设置
 allinone_dir = pathlib.Path(__file__).parent  # /allinone/
-collaborator = 'https://ssrf.ragnarokv.site/'
-start_time = utils.getCurrentTime()
+collaborator = os.getenv('collaborator')
+start_time = datetime.today().strftime('%m-%d-%H:%M')
 domain_name = ""
 
 
-root_data_dir = pathlib.Path("/root/docker-nginx-php-mysql/web/public/data")              #where to save your data
-current_data_dir =  utils.makeDir(root_data_dir/domain_name/start_time)
+root_data_dir = pathlib.Path(os.getenv('root_data_dir'))              #where to save your data
+current_data_dir =  root_data_dir/domain_name/start_time
 log_path = current_data_dir/f'AllInOne_{start_time}.log'  # AllInOne日志保存路径
 
 

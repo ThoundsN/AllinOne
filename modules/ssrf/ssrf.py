@@ -13,14 +13,14 @@ def runFfufSsrf(urls_file:str):
     logger.log('info',f'ssrf fuzzing finished')
 
 
-def process_oneparam_copy(copy, param,collaborator):
-    marker = copy.host + str(copy.path) + param
-    # print('Inseted marker:             '+marker)
-    value = collaborator + marker
-    copy.args[param] = value
-    # print('New Copy:           {}'.format(copy))
-    # print('\n\n\n')
-    return copy
+# def process_oneparam_copy(copy, param, collaborator):
+#     marker = copy.host + str(copy.path) + param
+#     # print('Inseted marker:             '+marker)
+#     value = collaborator + marker
+#     copy.args[param] = value
+#     # print('New Copy:           {}'.format(copy))
+#     # print('\n\n\n')
+#     return copy
 
 
 def process_allparam_copy(copy,collaborator):
@@ -41,7 +41,7 @@ def process_url(url,collaborator):
 
     f = furl(url)
 
-    new_furl = process_allparam_copy(f.copy(),collaborator)
+    new_furl = process_allparam_copy(f.copy(), collaborator)
     return new_furl
     # else:
     #     params = f.args
@@ -62,6 +62,8 @@ def ssrfWrapper():
         processed_urls.add(process_url(url,config.collaborator))
 
     utils.writeFile(processed_urls,config.ssrf_urls_file)
+
+    runFfufSsrf(config.ssrf_urls_file)
 
 
 

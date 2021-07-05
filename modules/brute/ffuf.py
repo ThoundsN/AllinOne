@@ -2,10 +2,10 @@ import config
 import utils
 from log import logger
 from utils import invokeCommand
-import ffuf2html
+from modules.brute import ffuf2html
 import csv
 import os
-import ffuf403
+from modules.brute import ffuf403
 
 def runffuf(domain_url:str) :
     #https://github.com/ffuf/ffuf

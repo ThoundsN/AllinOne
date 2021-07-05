@@ -5,8 +5,13 @@ import fnmatch
 import os
 import yaml
 from termcolor import colored
+from pathlib import Path
 
-RULES = yaml.safe_load(open('rules.yaml'))
+
+file_path = Path(__file__).resolve() 
+config_path = file_path.parent / 'rules.yaml'
+RULES = yaml.safe_load(open(config_path))
+# print(RULES)
 FILETYPE = RULES['filetype']
 FILETYPE_WEIGHT = RULES['filetype_weight']
 GREP_WORDS = RULES['grep_words']

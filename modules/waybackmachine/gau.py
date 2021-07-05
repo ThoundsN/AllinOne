@@ -4,6 +4,7 @@ from log import logger
 import re
 import os
 from utils import invokeCommand,downloadLinksInFile,makeDir
+from modules.hostalive import httpx
 
 def runGau(domain:str) -> set:
     cmd = f"{config.gau_command} -subs -b jpg,png,gif,woff,woff2,svg -o {domain} "
@@ -44,7 +45,7 @@ def gauWrapper(domain):
         for url in urldedupe_results:
             f.write(url)
 
-    live_withquery_urls = utils.testLiveUrls({config.waybackurls_withquery_file})
+    live_withquery_urls = httx.runHttpx({config.waybackurls_withquery_file})
     with open(config.waybackurls_withquery_live_file,'w') as f:
         for url in live_withquery_urls:
             f.write(url)

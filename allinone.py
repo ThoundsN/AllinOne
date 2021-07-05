@@ -71,7 +71,7 @@ class AllInOne(object):
         ssrf.ssrfWrapper()
 
     @staticmethod
-    def check(self):   #checkDependencies
+    def check():   #checkDependencies
         varialbes = vars(config)
         for key in varialbes:
             if key.endswith("command"):

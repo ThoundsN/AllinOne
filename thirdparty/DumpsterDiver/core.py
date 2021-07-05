@@ -16,8 +16,12 @@ import yaml
 import zipfile
 import zlib
 from termcolor import colored
+from pathlib import Path
 
-CONFIG = yaml.safe_load(open('config.yaml'))
+file_path = Path(__file__).resolve() 
+config_path = file_path.parent / 'config.yaml'
+
+CONFIG = yaml.safe_load(open(config_path))
 BASE64_CHARS = CONFIG['base64_chars']
 #PATH = './'
 #OUTFILE = ''

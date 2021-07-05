@@ -65,10 +65,10 @@ thirdparty_dir =  allinone_dir/'thirdparty'
 binary_dir = thirdparty_dir/'binary'
 python_dir = thirdparty_dir/'python'
 
-oneforall_command = thirdparty_dir/"oneforall"/"oneforall.py"
+oneforall_command = thirdparty_dir/"OneForAll"/"oneforall.py"
 sqlite3_oneforall_path = thirdparty_dir/"AllInOne"/"results"/"result.sqlite3"
 gau_command = binary_dir/"gau"
-waybackmachine_downloader_command = binary_dir/"wayback_machine_downloader"
+waybackmachine_downloader_command = "wayback_machine_downloader"
 urldedupe_command = binary_dir/"urldedupe"
 aria2c_command = "aria2c"
 dumpsterdriver_command = thirdparty_dir/"DumpsterDiver"/"DumpsterDiver.py"

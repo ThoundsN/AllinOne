@@ -1,7 +1,7 @@
 import config
 import utils
 from log import logger
-import timeSqli
+from modules.sqli import timeSqli
 
 
 def runqsfuzzSqli(urls_file:str,template_file:str):

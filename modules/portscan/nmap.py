@@ -1,7 +1,7 @@
 import config
 from log import logger
 from utils import invokeCommand
-from masscan import parseMasscanOutputList
+from modules.portscan.masscan import parseMasscanOutputList
 import asyncio
 
 

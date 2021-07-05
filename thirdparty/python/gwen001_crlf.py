@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # I don't believe in license.
 # You can do whatever you want with this program.

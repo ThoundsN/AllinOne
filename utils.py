@@ -3,11 +3,11 @@ from pathlib import Path
 import glob
 import sqlite3
 from log import logger
-from modules.hostalive import httpx
 
 
 
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Runner.run
+#http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Result
 def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
     '''
 
@@ -16,10 +16,12 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
     :param return_stdout:
     :return:  str if return_stdout
     '''
-    result = run(command,hide=True)
-    if not result.ok and stop_when_exception:
-        logger.log("FATAL",f"invokeCommand error: {result.stderr}")
-        exit(1)
+    if not stop_when_exception:
+        result = run(command,hide=True)
+    else:
+        result = run(command,hide=True,warn=True)
+        if not result.ok:
+            logger.log("FATAL",f"invokeCommand error: {result.stderr}")
     if return_stdout:
         return result.stdout  #string
 
@@ -98,9 +100,6 @@ def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
     return sql_results
 
 
-def testLiveUrls(urls_file)->set:
-    live_urls = httpx.runHttpx(urls_file)
-    return live_urls
 
 def writeFile(lines,file:str):
     with open(file,'w') as f:
@@ -126,15 +125,28 @@ def filterNegativeFile(result_file:str):
         p.rename(Path(p.parent, f"vul_{p.stem}{p.suffix}"))
 
 
-def checkOneDependency(command_path):
+def checkOneDependency(command_path):   # exit code 126,127 of invoke.run is bad 
     test_commands = set()
     test_commands.add(f"{command_path} -h ")
     test_commands.add(f"{command_path} --help ")
-    test_commands.add(f"{command_path} help ")
     command_ok = False
+    command_possilbe_ok = False
     for cmd in test_commands:
-        result = run(cmd, hide=True)
-        if result.stderr is  None:
+        # print(cmd)
+        try:
+            result = run(cmd, hide=True,warn=True,timeout=3)
+        except:
+            print(f"{command_path} seems to be a shell pipeline program , can't determine whether it is executable ")
+            return 
+        # print(result)
+        if result.ok:
             command_ok =  True
-    if not command_ok:
-        print(f"It's possible that {command_path} have some problems, better check it out manually ")
+            break
+        if result.return_code != 126 and result.return_code != 127:
+            command_possilbe_ok = True
+    if command_ok:
+        return
+    if  command_possilbe_ok:
+        print(f"{command_path} --help/-h  returns nonzero code  , better check it out manually ")
+    else:
+        print(f"Very likely that {command_path} have some problems, better check it out manually ")

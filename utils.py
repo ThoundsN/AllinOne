@@ -3,6 +3,7 @@ from pathlib import Path
 import glob
 import sqlite3
 from log import logger
+import re
 
 
 
@@ -26,7 +27,24 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
         return result.stdout  #string
 
 
+def text2set(text:str)->set:
+    str_list = text.split("\n")
+    str_set = set(filter(None, str_list))
+    return str_set
 
+
+def isEmpty(file_path:Path)->bool:
+    if not file_path.exists()
+        return True 
+    if file_path.stat().st_size == 0:
+        return True
+    if file_path.stat().st_size < 1024:
+        with open(file_path,'r') as f:
+            for line in f:
+                if not line in ['\n', '\r\n']:
+                    return False
+        return True
+    return False
 
 # def getCurrentTime():
 #     current_time =  datetime.today().strftime('%m-%d-%H:%M')
@@ -92,7 +110,12 @@ def dot2Underscore(domain:str):
 
 
 def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
-    query.replace(domain,dot2Underscore(domain))
+    # logger.log("INFO",f"domain: {domain}")
+    # logger.log("INFO",dot2Underscore(domain))
+    # logger.log("INFO",f"{domain in query}")
+    
+    query = query.replace(domain,dot2Underscore(domain))
+    logger.log("INFO",f"Querying oneforall sqlitedb {sqlite_path} with query:  {query}")
     con =  sqlite3.connect(sqlite_path)
     cursor = con.cursor()
     cursor.execute(query)
@@ -101,13 +124,23 @@ def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
 
 
 
-def writeFile(lines,file:str):
-    with open(file,'w') as f:
+def writeFile(lines:set,file):
+    logger.log("INFO",f"write results to {file}")
+    # logger.log("INFO",f"{type(lines)} {lines}")
+    
+    with file.open('w') as f:
         if isinstance(lines, dict):
             for k,v in lines.items():
                 f.write(f"{k}   :   {v}")
-        for result_line in lines:
-            f.write(result_line)
+        elif any(isinstance(i, tuple) for i in lines):
+            for result_line in lines:
+                result_line = "".join(result_line)
+                f.write(result_line+'\n')
+        else:
+            for result_line in lines:
+            # logger.log("INFO",f" {type(result_line)}{result_line}")
+                f.write(result_line+'\n')
+
 
 def readFile(file:str):
     with open(file,'w') as f:

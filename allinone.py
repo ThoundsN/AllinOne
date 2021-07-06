@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import pathlib
 import fire
 from modules.brute import ffuf
 from modules.crlf import crlf
@@ -14,6 +15,9 @@ from modules.xss import xss
 from modules.other import screenshot
 import utils
 import config
+from datetime import datetime
+import log
+
 
 
 yellow = '\033[01;33m'
@@ -29,18 +33,16 @@ class AllInOne(object):
 
     Examples:
 
-        python3 AllInOne.py --domain example.com run
+        python3 AllInOne.py run example.com 
 
     """
-    def __init__(self,domain=None):
-        self.domain = domain
-        # self.domains = domains
-        # self.skipdns = skipdns
-        config.domain_name = domain
+    # def __init__(self,domain=None):
+    #     self.domain = domain
+    #     # self.domains = domains
+    #     # self.skipdns = skipdns
+    #     config.domain_name = domain
 
 
-    def configParam(self):
-        pass
 
 
     @staticmethod
@@ -50,25 +52,87 @@ class AllInOne(object):
             if key.endswith("dir"):
                 utils.makeDir(varialbes[key])
 
-    def configThirdPartyPath(self):
-        pass
+    @staticmethod
+    def configDataDir(domain_name):
+        config.domain_name = domain_name
+        config.start_time = datetime.today().strftime('%m_%d_%H:%M')
 
-    def run(self,domain):
+        
+
+        config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
+        config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
+
+        # config.current_data_dir = pathlib.Path("/root/data/atsint.net/07_05_10:02")
+        # config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
+
+
+
+        config.wayback_subdir = config.current_data_dir/'wayback'
+
+        config.waybackurls_file = config.wayback_subdir / 'waybackurls.txt'
+        config.waybackjsurls_file = config.wayback_subdir / 'waybackJsurls.txt'
+        config.waybackurls_withquery_file = config.wayback_subdir / 'withqurey_waybackurls.txt'
+        config.waybackurls_withquery_live_file = config.wayback_subdir / 'live_withqurey_waybackurls.txt'
+
+        config.runtime_subdir = config.current_data_dir/'runtime'
+        config.runtime_jsfiles_dir = config.runtime_subdir /'jsfiles'
+        config.ffuf_runtime_raw_dir = config.runtime_subdir / 'ffuf_runtime/raw'
+        config.ffuf_runtime_processed_dir = config.runtime_subdir / 'ffuf_runtime/processed'
+        config.ffuf_runtime_process403_dir = config.runtime_subdir / 'ffuf_runtime/process_403'
+
+        config.ffuf_runtime_403_fuzzingpath_urls_result_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_urls.txt'
+        config.ffuf_runtime_403_fuzzingpath_result_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_result.csv'
+        config.ffuf_runtime_403_fuzzingpath_processed_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_processed.csv'
+        config.subdomains_file = config.runtime_subdir / 'subdomains.txt'
+        config.alive_urls_file = config.runtime_subdir / 'alive_urls.txt'
+        config.alive_noncdn_urls_file = config.runtime_subdir / 'alive_noncdn_urls.txt'
+        config.all_urls_file = config.runtime_subdir / 'all_urls.txt'
+        config.noncdn_ips_file = config.runtime_subdir / 'noncdn_ips.txt'
+        config.masscan_ip_port_file = config.runtime_subdir / 'masscan_ip_port.txt'
+        config.ssrf_urls_file = config.runtime_subdir / 'ssrfurls.txt'
+
+
+        config.result_subdir = config.current_data_dir/'results'
+        config.result_screenshots_dir = config.result_subdir /'screenshots'
+
+        config.jsfirebase_html = config.result_subdir / 'jsfirebase.html'
+        config.nmap_result_file = config.result_subdir / 'nmap_result.txt'
+        config.ffuf_result_file = config.result_subdir / 'ffuf.html'
+        config.ffuf_403_result_html = config.result_subdir / 'ffuf403.html'
+        config.xsspy_result_file = config.result_subdir / 'xsspy_result.txt'
+        config.kxss_result_file = config.result_subdir / 'kxss_result.txt'
+        config.lfipy_result_file = config.result_subdir / 'lfipy_result.txt'
+        config.crlfpy_result_file = config.result_subdir / 'crlfpy_result.txt'
+        config.qsfuzz_sqli_result_file = config.result_subdir / 'sqli_result.txt'
+        config.time_sqli_result_file = config.result_subdir / 'time_sqli_result.txt'
+
+    def run(self, domain):
+        self.configDataDir(domain)
         self.mkDataDir()
-        onefall.oneforallWrapper(domain)
-        gau.gauWrapper(domain)
-        waybackdownloader.waybackDownloaderWrapper()
-        jsentropy.dumpsterDriverWrapper()
-        jsfirebase.jsfirebaseWrapper()
+
+        log.logger.add(config.log_path, level='DEBUG', format=log.logfile_fmt, enqueue=True, encoding='utf-8')
+
+        log.logger.log('INFO',f'Starting running allinone with {domain}')
+
+        onefall.oneforallWrapper()
+
+        gau.gauWrapper()
+        if not config.skip_wayback_jsfiles and not config.skip_wayback_jsfiles:
+            waybackdownloader.waybackDownloaderWrapper()
+            jsentropy.dumpsterDriverWrapper()
+            jsfirebase.jsfirebaseWrapper()
+
         screenshot.webscreenshotWrapper()
         masscan.masscanWrapper()
         nmap.nmapWrapper()
         ffuf.ffufWrapper()
-        xss.xssWrapper()
-        sqli.sqliWrapper()
-        crlf.crlfWrapper()
-        lfi.lfiWrapper()
-        ssrf.ssrfWrapper()
+
+        if not config.skip_wayback:
+            xss.xssWrapper()
+            sqli.sqliWrapper()
+            crlf.crlfWrapper()
+            lfi.lfiWrapper()
+            ssrf.ssrfWrapper()
 
     @staticmethod
     def check():   #checkDependencies

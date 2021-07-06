@@ -1,4 +1,3 @@
-from datetime import datetime
 import pathlib
 from dotenv import load_dotenv
 import os
@@ -6,57 +5,17 @@ import os
 load_dotenv()
 
 
-# 路径设置
-allinone_dir = pathlib.Path(__file__).parent  # /allinone/
-collaborator = os.getenv('collaborator')
-start_time = datetime.today().strftime('%m-%d-%H:%M')
-domain_name = ""
+skip_wayback = False
+skip_wayback_jsfiles = False
 
+# 路径设置
 
 root_data_dir = pathlib.Path(os.getenv('root_data_dir'))              #where to save your data
-current_data_dir =  root_data_dir/domain_name/start_time
-log_path = current_data_dir/f'AllInOne_{start_time}.log'  # AllInOne日志保存路径
+collaborator = os.getenv('collaborator')
 
 
-wayback_subdir = current_data_dir/'wayback'
+allinone_dir = pathlib.Path(__file__).parent  # /allinone/
 
-waybackurls_file = wayback_subdir / 'waybackurls.txt'
-waybackjsurls_file = wayback_subdir / 'waybackJsurls.txt'
-waybackurls_withquery_file = wayback_subdir / 'withqurey_waybackurls.txt'
-waybackurls_withquery_live_file = wayback_subdir / 'live_withqurey_waybackurls.txt'
-
-
-runtime_subdir = current_data_dir/'runtime'
-runtime_jsfiles_dir = runtime_subdir /'jsfiles'
-ffuf_runtime_raw_dir = runtime_subdir / 'ffuf_runtime/raw'
-ffuf_runtime_processed_dir = runtime_subdir / 'ffuf_runtime/processed'
-ffuf_runtime_process403_dir = runtime_subdir / 'ffuf_runtime/process_403'
-
-ffuf_runtime_403_fuzzingpath_urls_result_csv = ffuf_runtime_process403_dir / 'fuzzingpath_urls.txt'
-ffuf_runtime_403_fuzzingpath_result_csv = ffuf_runtime_process403_dir / 'fuzzingpath_result.csv'
-ffuf_runtime_403_fuzzingpath_processed_csv = ffuf_runtime_process403_dir / 'fuzzingpath_processed.csv'
-subdomains_file = runtime_subdir / 'subdomains.txt'
-alive_urls_file = runtime_subdir / 'alive_urls.txt'
-alive_noncdn_urls_file = runtime_subdir / 'alive_noncdn_urls.txt'
-all_urls_file = runtime_subdir / 'all_urls.txt'
-noncdn_ips_file = runtime_subdir / 'noncdn_ips.txt'
-masscan_ip_port_file = runtime_subdir / 'masscan_ip_port.txt'
-ssrf_urls_file = runtime_subdir / 'ssrfurls.txt'
-
-
-result_subdir = current_data_dir/'results'
-result_screenshots_dir = result_subdir /'screenshots'
-
-jsfirebase_html = result_subdir / 'jsfirebase.html'
-nmap_result_file = result_subdir / 'nmap_result.txt'
-ffuf_result_file = result_subdir / 'ffuf.html'
-ffuf_403_result_html = result_subdir / 'ffuf403.html'
-xsspy_result_file = result_subdir / 'xsspy_result.txt'
-kxss_result_file = result_subdir / 'kxss_result.txt'
-lfipy_result_file = result_subdir / 'lfipy_result.txt'
-crlfpy_result_file = result_subdir / 'crlfpy_result.txt'
-qsfuzz_sqli_result_file = result_subdir / 'sqli_result.txt'
-time_sqli_result_file = result_subdir / 'time_sqli_result.txt'
 
 
 
@@ -66,7 +25,7 @@ binary_dir = thirdparty_dir/'binary'
 python_dir = thirdparty_dir/'python'
 
 oneforall_command = thirdparty_dir/"OneForAll"/"oneforall.py"
-sqlite3_oneforall_path = thirdparty_dir/"AllInOne"/"results"/"result.sqlite3"
+sqlite3_oneforall_path = thirdparty_dir/"OneForAll"/"results"/"result.sqlite3"
 gau_command = binary_dir/"gau"
 waybackmachine_downloader_command = "wayback_machine_downloader"
 urldedupe_command = binary_dir/"urldedupe"

@@ -5,7 +5,7 @@ from utils import invokeCommand
 
 def runcrlfpy(urls_file:str,result_file:str) :
     cmd=f" {config.gwen_crlfpy_command} -v 4 -u  {urls_file}  -O  {result_file}  -t 80"
-    logger.log('info', f'Running crlfpy with command {cmd}')
+    logger.log('INFO', f'Running crlfpy with command {cmd}')
     invokeCommand(cmd)
 
 

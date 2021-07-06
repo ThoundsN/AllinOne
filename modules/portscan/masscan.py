@@ -4,7 +4,7 @@ from utils import invokeCommand
 
 def runMasscan(ipfile_input:str,file_output:str):
     cmd=f"{config.masscan_command}  -p1-65535 -iL {ipfile_input}  --source-port 61000 --rate 10000 -oL {file_output}"
-    logger.log('debug', f'Running masscan with command {cmd}')
+    logger.log('DEBUG', f'Running masscan with command {cmd}')
     invokeCommand(cmd)
 
 
@@ -37,6 +37,6 @@ open tcp 853 8.8.8.8 1624852646
 
 
 def masscanWrapper():
-    logger.log('info',f"starting running masscan with input {config.noncdn_ips_file} ")
+    logger.log('INFO',f"starting running masscan with input {config.noncdn_ips_file} ")
     runMasscan(config.noncdn_ips_file,config.masscan_ip_port_file)
-    logger.log('info',f"masscan finished, result will be saved to  {config.masscan_ip_port_file} ")
+    logger.log('INFO',f"masscan finished, result will be saved to  {config.masscan_ip_port_file} ")

@@ -8,7 +8,7 @@ import json
 
 def runDumpsterDriver(output_file:str):
     cmd = f"python3 {config.dumpsterdriver_command}  -p . -o  {output_file} > /dev/null"
-    logger.log('info',f'Running dumpsterdriver with command {cmd}')
+    logger.log('INFO',f'Running dumpsterdriver with command {cmd}')
     invokeCommand(cmd)
 
 

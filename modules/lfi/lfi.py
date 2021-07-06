@@ -5,7 +5,7 @@ import utils
 
 def runLfipy(urls_file:str,result_file:str) :
     cmd=f" {config.gwen_lfipy_command} -v 4 -u  {urls_file}  -O  {result_file}  "
-    logger.log('info', f'Running lfipy with command {cmd}')
+    logger.log('INFO', f'Running lfipy with command {cmd}')
     invokeCommand(cmd)
 
 

@@ -4,7 +4,7 @@ from utils import invokeCommand
 
 def runWebScreenshot(urls_file,result_dir:str):
     cmd=f"{config.webscreenshot_command}  -i  {urls_file} -r phantomjs  -o {result_dir}  "
-    logger.log('info', f'Screenshot urls webscreenshot with command {cmd}')
+    logger.log('INFO', f'Screenshot urls webscreenshot with command {cmd}')
     invokeCommand(cmd)
 
 

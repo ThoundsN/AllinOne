@@ -255,7 +255,7 @@ def fuzzPaths(raw_ffufcsvs:list,fuzzing_urls_file:str,ffuf_outfile:str):
     logger.log("info",f"Total {len(fuzzing_urls)} urls to fuzz for 403 bypass ................")
     cmd1 = f"{config.ffuf_path} -w {fuzzing_urls_file}   -u FUZZ  -H \"X-Real-IP: 127.0.0.1\" -r -mc 200,301,302,307 -fs 0 -fw 1 -t 100 -s -o {ffuf_outfile} -of csv"
 
-    logger.log('debug', f'Running ffuf with command {cmd1}')
+    logger.log('DEBUG', f'Running ffuf with command {cmd1}')
 
     invokeCommand(cmd1)
 

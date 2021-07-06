@@ -1,1 +1,7 @@
 .env
+errors.log
+__pycache__/
+.idea
+todo.txt
+thirdparty/OneForAll/results/
+**/__pycache__

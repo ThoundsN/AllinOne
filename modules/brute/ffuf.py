@@ -7,10 +7,11 @@ import csv
 import os
 from modules.brute import ffuf403
 
+
 def runffuf(domain_url:str) :
     #https://github.com/ffuf/ffuf
     cmd=f"{config.ffuf_command}  -w {config.wordlist_path} -u {domain_url}/FUZZ -sa -r -H \"X-Real-IP: 127.0.0.1 \"-recursion -sf -ac -fs  0 -fw 1 -t 100 -s -o {config.ffuf_runtime_raw_dir}/{utils.dot2Underscore(domain_url)}.csv -of csv "
-    logger.log('debug', f'Running ffuf with command {cmd}')
+    logger.log('DEBUG', f'Running ffuf with command {cmd}')
     invokeCommand(cmd)
 
 

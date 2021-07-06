@@ -11,8 +11,8 @@ def checkFirebaseInJs(jsfile:str)-> str:
             return  location2href(jsfile)
 
 def jsfirebaseWrapper():
-    logger.log('info',f'Starting to check firebaseio urls in jsfiles')
+    logger.log('INFO',f'Starting to check firebaseio urls in jsfiles')
     jsfiles = getAllJsfiles(config.runtime_jsfiles_dir)
     jshrefs = [checkFirebaseInJs(jsfile) for jsfile in jsfiles]
     utils.writeFile(jshrefs,config.jsfirebase_html)
-    logger.log('info',f'firebaseio results saved to {config.jsfirebase_html}')
+    logger.log('INFO',f'firebaseio results saved to {config.jsfirebase_html}')

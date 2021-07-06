@@ -8,9 +8,9 @@ from furl import furl
 
 def runFfufSsrf(urls_file:str):
     cmd = f"{config.ffuf_command} -w {urls_file}   -u FUZZ  -H \"X-Real-IP: 127.0.0.1\" -r -mc 200,301,302,307 -fs 0 -fw 1 -t 100 -s "
-    logger.log('info',f'Running ssrf urls fuzzing with fuff with command {cmd}')
+    logger.log('INFO',f'Running ssrf urls fuzzing with fuff with command {cmd}')
     utils.invokeCommand(cmd)
-    logger.log('info',f'ssrf fuzzing finished')
+    logger.log('INFO',f'ssrf fuzzing finished')
 
 
 # def process_oneparam_copy(copy, param, collaborator):

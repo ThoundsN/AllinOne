@@ -4,12 +4,13 @@ import glob
 import sqlite3
 from log import logger
 import re
+import config 
 
 
 
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Runner.run
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Result
-def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
+def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False,pty=False):
     '''
 
     :param command:
@@ -17,14 +18,33 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False):
     :param return_stdout:
     :return:  str if return_stdout
     '''
-    if not stop_when_exception:
-        result = run(command,hide=True)
+    if config.verbose_log:
+        if not stop_when_exception:
+            result = run(command,out_stream=config.log_path,pty=pty)
+        else:
+            result = run(command,out_stream=config.log_path,warn=True,pty=pty)
+            if not result.ok:
+                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
+        if return_stdout:
+            return result.stdout  #string        
+    elif  config.verbose_stdout:
+        if not stop_when_exception:
+            result = run(command,pty=pty)
+        else:
+            result = run(command,warn=True,pty=pty)
+            if not result.ok:
+                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
+        if return_stdout:
+            return result.stdout  #string
     else:
-        result = run(command,hide=True,warn=True)
-        if not result.ok:
-            logger.log("FATAL",f"invokeCommand error: {result.stderr}")
-    if return_stdout:
-        return result.stdout  #string
+        if not stop_when_exception:
+            result = run(command,hide='out',pty=pty)
+        else:
+            result = run(command,warn=True,hide='out',pty=pty)
+            if not result.ok:
+                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
+        if return_stdout:
+            return result.stdout  #string 
 
 
 def text2set(text:str)->set:
@@ -34,17 +54,23 @@ def text2set(text:str)->set:
 
 
 def isEmpty(file_path:Path)->bool:
-    if not file_path.exists()
-        return True 
+    is_empty = False
+    if type(file_path) == str:
+        file_path =  Path(file_path)
+    if not file_path.exists():
+        is_empty = True 
     if file_path.stat().st_size == 0:
-        return True
+        is_empty = True 
+        
     if file_path.stat().st_size < 1024:
         with open(file_path,'r') as f:
-            for line in f:
-                if not line in ['\n', '\r\n']:
-                    return False
+            if any(line in ['\n', '\r\n'] for line in f):
+                is_empty = True 
+    if is_empty:
+        logger.log('INFO', f' File: {file_path} is empty')
         return True
     return False
+
 
 # def getCurrentTime():
 #     current_time =  datetime.today().strftime('%m-%d-%H:%M')
@@ -68,29 +94,29 @@ def makeDir(absolute_path):
     return absolute_path
 
 
-def getAllJsfiles(dir:str) -> list:
+def getAllJsfiles(dir) -> list:
     '''
     returns absolute paths
     :param dir:
     :return:
     '''
-    files = glob.glob(dir + '/**/*.js', recursive=True)
+    files = glob.glob(str(dir) + '/**/*.js', recursive=True)
     return files
 
-def getFilesInDir(dir:str,commonality:str) -> list:
+def getFilesInDir(dir,commonality:str) -> list:
     '''
     returns absolute paths
     :param dir:
     :return:
     '''
-    files = glob.glob(dir + f'/**/*{commonality}', recursive=True)
+    files = glob.glob(str(dir) + f'/**/*{commonality}', recursive=True)
     return files
 
 
 
 def downloadLinksInFile(file_path:str):
     import config
-    cmd = f"{config.aria2c_command} -i {file_path} "
+    cmd = f"{config.aria2c_command} -i {file_path} -j 15"
     invokeCommand(cmd)
 
 
@@ -105,16 +131,18 @@ def location2href(location:str):
     href = prefix + suffix
     return  href
 
-def dot2Underscore(domain:str):
+def replaceUnderscore(domain:str):
+    domain = domain.replace('/','_')
+    domain = domain.replace('：','_')
     return domain.replace('.','_')
 
 
 def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
     # logger.log("INFO",f"domain: {domain}")
-    # logger.log("INFO",dot2Underscore(domain))
+    # logger.log("INFO",replaceUnderscore(domain))
     # logger.log("INFO",f"{domain in query}")
     
-    query = query.replace(domain,dot2Underscore(domain))
+    query = query.replace(domain,replaceUnderscore(domain))
     logger.log("INFO",f"Querying oneforall sqlitedb {sqlite_path} with query:  {query}")
     con =  sqlite3.connect(sqlite_path)
     cursor = con.cursor()
@@ -141,9 +169,9 @@ def writeFile(lines:set,file):
             # logger.log("INFO",f" {type(result_line)}{result_line}")
                 f.write(result_line+'\n')
 
-
+#stupid bug:     with open(file,'w') as f:
 def readFile(file:str):
-    with open(file,'w') as f:
+    with open(file,'r') as f:
         lines = f.readlines()
     return lines
 
@@ -183,3 +211,10 @@ def checkOneDependency(command_path):   # exit code 126,127 of invoke.run is bad
         print(f"{command_path} --help/-h  returns nonzero code  , better check it out manually ")
     else:
         print(f"Very likely that {command_path} have some problems, better check it out manually ")
+
+
+def lineCount(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1

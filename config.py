@@ -7,6 +7,8 @@ load_dotenv()
 
 skip_wayback = False
 skip_wayback_jsfiles = False
+verbose_stdout = False
+verbose_log = False
 
 # 路径设置
 
@@ -41,6 +43,7 @@ kxss_command = binary_dir/"kxss"
 gwen_lfipy_command = python_dir/"gwen001_lfi.py"
 gwen_crlfpy_command = python_dir/"gwen001_crlf.py "
 webscreenshot_command = thirdparty_dir/"webscreenshot"/"webscreenshot.py"
+httprobe_command = binary_dir/"httprobe"
 
 
 qsfuzz_command =binary_dir/"qsfuzz"

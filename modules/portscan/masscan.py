@@ -26,8 +26,8 @@ open tcp 853 8.8.8.8 1624852646
             if line.startswith('#'):
                 continue
             a = line.split(' ')
-            ip = a[4]
-            port = a[3]
+            ip = a[3]
+            port = a[2]
             if ip in ip_port:
                 ip_port[ip].add(port)
             else:

@@ -168,6 +168,9 @@ def csvfile2html(csvfile:str,html_output:str):
 
     output.close()
 
+    logger.log('INFO', f'Generated ffuf result   {html_output}')
+
+
 def main(input_path,output_html):
 
     files = get_files_list(input_path)
@@ -185,6 +188,9 @@ def main(input_path,output_html):
     output.write(tail_string)
 
     output.close()
+
+    logger.log('INFO', f'Generated ffuf result   {output_html}')
+
 
 
 if __name__ == '__main__':

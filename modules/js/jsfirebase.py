@@ -14,5 +14,12 @@ def jsfirebaseWrapper():
     logger.log('INFO',f'Starting to check firebaseio urls in jsfiles')
     jsfiles = getAllJsfiles(config.runtime_jsfiles_dir)
     jshrefs = [checkFirebaseInJs(jsfile) for jsfile in jsfiles]
-    utils.writeFile(jshrefs,config.jsfirebase_html)
-    logger.log('INFO',f'firebaseio results saved to {config.jsfirebase_html}')
+    jshrefs = list(filter(None,jshrefs))
+    if jshrefs:
+        logger.log('INFO',f' {jshrefs}')
+
+        utils.writeFile(jshrefs,config.jsfirebase_html)
+        logger.log('INFO',f'firebaseio results saved to {config.jsfirebase_html}')
+    else:
+        logger.log('INFO',f'Didn\'t  find any firebaseio urls ')
+

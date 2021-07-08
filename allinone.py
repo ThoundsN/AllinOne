@@ -36,11 +36,15 @@ class AllInOne(object):
         python3 AllInOne.py run example.com 
 
     """
-    # def __init__(self,domain=None):
-    #     self.domain = domain
-    #     # self.domains = domains
-    #     # self.skipdns = skipdns
-    #     config.domain_name = domain
+    def __init__(self,domain=None,verbose=None):
+        self.domain = domain
+        config.domain_name = domain
+
+        if verbose == "stdout":
+            config.stdout = True
+        elif verbose == "log":
+            config.log = True
+            
 
 
 
@@ -54,16 +58,16 @@ class AllInOne(object):
 
     @staticmethod
     def configDataDir(domain_name):
-        config.domain_name = domain_name
-        config.start_time = datetime.today().strftime('%m_%d_%H:%M')
+        # config.domain_name = domain_name
+        config.start_time = datetime.today().strftime('%m_%d_%H_%M')
 
         
 
-        config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
-        config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
-
-        # config.current_data_dir = pathlib.Path("/root/data/atsint.net/07_05_10:02")
+        # config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
         # config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
+
+        config.current_data_dir = pathlib.Path("/root/data/paddypower.com/07_08_06_01/")
+        config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
 
 
 
@@ -71,6 +75,7 @@ class AllInOne(object):
 
         config.waybackurls_file = config.wayback_subdir / 'waybackurls.txt'
         config.waybackjsurls_file = config.wayback_subdir / 'waybackJsurls.txt'
+        config.waybackurls_unique_file = config.wayback_subdir / 'waybackurls_unique.txt'
         config.waybackurls_withquery_file = config.wayback_subdir / 'withqurey_waybackurls.txt'
         config.waybackurls_withquery_live_file = config.wayback_subdir / 'live_withqurey_waybackurls.txt'
 
@@ -106,26 +111,27 @@ class AllInOne(object):
         config.qsfuzz_sqli_result_file = config.result_subdir / 'sqli_result.txt'
         config.time_sqli_result_file = config.result_subdir / 'time_sqli_result.txt'
 
-    def run(self, domain):
-        self.configDataDir(domain)
+    def run(self):
+        self.configDataDir(self.domain)
         self.mkDataDir()
 
         log.logger.add(config.log_path, level='DEBUG', format=log.logfile_fmt, enqueue=True, encoding='utf-8')
+        log.logger.log('INFO',f'Starting running allinone with {self.domain}')
 
-        log.logger.log('INFO',f'Starting running allinone with {domain}')
+        # onefall.oneforallWrapper()
 
-        onefall.oneforallWrapper()
 
-        gau.gauWrapper()
-        if not config.skip_wayback_jsfiles and not config.skip_wayback_jsfiles:
-            waybackdownloader.waybackDownloaderWrapper()
-            jsentropy.dumpsterDriverWrapper()
-            jsfirebase.jsfirebaseWrapper()
 
-        screenshot.webscreenshotWrapper()
-        masscan.masscanWrapper()
-        nmap.nmapWrapper()
-        ffuf.ffufWrapper()
+        # screenshot.webscreenshotWrapper()
+        # masscan.masscanWrapper()
+        # nmap.nmapWrapper()
+        # ffuf.ffufWrapper()
+
+        # gau.gauWrapper()
+        if not config.skip_wayback_jsfiles and not config.skip_wayback:
+            # jsentropy.dumpsterDriverWrapper()
+            # jsfirebase.jsfirebaseWrapper()
+            pass
 
         if not config.skip_wayback:
             xss.xssWrapper()

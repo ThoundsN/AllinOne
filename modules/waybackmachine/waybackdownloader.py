@@ -14,9 +14,9 @@ def runWaybackDownloader(domain_url:str):
     :return:
     '''
     cmd = f'{config.waybackmachine_downloader_command} {domain_url} --only "/\.js/i"    '
-    logger.log('DEBUG',f'Running waybackmachine downloader  with command {cmd}')
+    logger.log('INFO',f'Running waybackmachine downloader  with command {cmd}')
     invokeCommand(cmd)
-    logger.log('DEBUG',f'waybackmachine downloader finished')
+    logger.log('INFO',f'waybackmachine downloader finished')
 
 
 def waybackDownloaderWrapper():

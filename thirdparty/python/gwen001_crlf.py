@@ -273,6 +273,7 @@ parser.add_argument( "-a","--path",help="set paths list" )
 parser.add_argument( "-d","--header",help="custom headers, example: cookie1=value1;cookie2=value2...", action="append" )
 parser.add_argument( "-p","--payloads",help="set payloads list" )
 parser.add_argument( "-o","--hosts",help="set host list (required or -u)" )
+parser.add_argument( "-O","--output",help="output file location " )
 # parser.add_argument( "-r","--redirect",help="follow redirection" )
 parser.add_argument( "-s","--scheme",help="scheme to use, default=http,https" )
 parser.add_argument( "-t","--threads",help="threads, default 10" )
@@ -354,14 +355,14 @@ else:
 
 t_totest = []
 u_max_length = 0
-d_output =  os.getcwd()+'/crlf'
-f_output = d_output + '/' + 'output'
-if not os.path.isdir(d_output):
-    try:
-        os.makedirs( d_output )
-    except Exception as e:
-        sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
-        exit()
+# d_output =  os.getcwd()+'/crlf'
+f_output = args.output
+# if not os.path.isdir(d_output):
+#     try:
+#         os.makedirs( d_output )
+#     except Exception as e:
+#         sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
+#         exit()
 
 sys.stdout.write( '%s[+] options are -> threads:%d, verbose:%d%s\n' % (fg('green'),_threads,_verbose,attr(0)) )
 sys.stdout.write( '[+] computing host and payload list...\n' )
@@ -444,7 +445,7 @@ t_multiproc = {
     'n_current': 0,
     'n_total': n_totest,
     'u_max_length': u_max_length+5,
-    'd_output': d_output,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
 
@@ -479,7 +480,7 @@ t_multiproc = {
     'n_current': 0,
     'n_total': len(t_realdotest),
     'u_max_length': u_max_length+5,
-    'd_output': d_output,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
 
@@ -502,3 +503,4 @@ try:
     q.join()
 except KeyboardInterrupt:
     sys.exit(1)
+

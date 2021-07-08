@@ -9,4 +9,4 @@ def runWebScreenshot(urls_file,result_dir:str):
 
 
 def webscreenshotWrapper():
-    runWebScreenshot(config.all_urls_file,config.result_screenshots_dir)
+    runWebScreenshot(config.alive_urls_file,config.result_screenshots_dir)

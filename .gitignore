@@ -5,3 +5,6 @@ __pycache__/
 todo.txt
 thirdparty/OneForAll/results/
 **/__pycache__
+webscreenshots_failed.txt
+paused.conf
+errors.log

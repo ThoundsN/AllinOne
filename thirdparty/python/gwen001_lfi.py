@@ -197,6 +197,7 @@ def realDoTest( t_params ):
     output = '%s\t\tC=%d\t\tT=%s\t\tV=%s\n' %  (url,r.status_code,content_type,vuln)
 
     fp = open( t_multiproc['f_output'], 'a+' )
+    # fp = f_output
     fp.write( output )
     fp.close()
 
@@ -214,6 +215,7 @@ parser.add_argument( "-p","--payloads",help="set payloads list" )
 parser.add_argument( "-o","--hosts",help="set host list (required or -u)" )
 # parser.add_argument( "-r","--redirect",help="follow redirection" )
 parser.add_argument( "-s","--scheme",help="scheme to use, default=http,https" )
+parser.add_argument( "-O","--output",help="output file location " )
 parser.add_argument( "-t","--threads",help="threads, default 10" )
 parser.add_argument( "-u","--urls",help="set url list (required or -o)" )
 parser.add_argument( "-w","--windows",help="only windows payloads", action="store_true" )
@@ -301,14 +303,14 @@ else:
 
 t_totest = []
 u_max_length = 0
-d_output =  os.getcwd()+'/lfi'
-f_output = d_output + '/' + 'output'
-if not os.path.isdir(d_output):
-    try:
-        os.makedirs( d_output )
-    except Exception as e:
-        sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
-        exit()
+# d_output =  os.getcwd()+'/lfi'
+f_output = args.output
+# if not os.path.isdir(d_output):
+#     try:
+#         os.makedirs( d_output )
+#     except Exception as e:
+#         sys.stdout.write( "%s[-] error occurred: %s%s\n" % (fg('red'),e,attr(0)) )
+#         exit()
 
 if _verbose < 4:
     sys.stdout.write( '%s[+] options are -> threads:%d, verbose:%d%s\n' % (fg('green'),_threads,_verbose,attr(0)) )
@@ -482,7 +484,7 @@ t_multiproc = {
     'n_current': 0,
     'n_total': n_totest,
     'u_max_length': u_max_length+5,
-    'd_output': d_output,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
 
@@ -518,7 +520,7 @@ t_multiproc = {
     'n_current': 0,
     'n_total': len(t_realdotest),
     'u_max_length': u_max_length+5,
-    'd_output': d_output,
+    # 'd_output': d_output,
     'f_output': f_output,
 }
 
@@ -541,3 +543,4 @@ try:
     q.join()
 except KeyboardInterrupt:
     sys.exit(1)
+

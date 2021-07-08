@@ -1,7 +1,7 @@
 import config
 import utils
 from log import logger
-from utils import invokeCommand, dot2Underscore,querySqlite
+from utils import invokeCommand, replaceUnderscore,querySqlite
 import itertools
 
 

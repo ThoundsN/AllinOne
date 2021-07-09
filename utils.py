@@ -176,6 +176,7 @@ def readFile(file:str):
     return lines
 
 def filterNegativeFile(result_file:str):
+    is_vulneralbe=False
     with open(result_file,'r') as r:
         text = r.read()
         if 'VULNERABLE' in text or 'vulnerable' in text:

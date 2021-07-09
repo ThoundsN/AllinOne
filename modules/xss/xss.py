@@ -13,7 +13,7 @@ def runXsspy(urls_file:str,result_file:str) :
 
 
 def runKxss(urls_file:str,file_out):
-    cmd=f"cat {urls_file}  | {config.kxss_command} "
+    cmd=f"cat {urls_file}  | {config.kxss_command}   >  {file_out} "
     logger.log('INFO', f'Running kxss with command {cmd}')
     invokeCommand(cmd)
     return

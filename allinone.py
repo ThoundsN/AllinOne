@@ -134,10 +134,10 @@ class AllInOne(object):
             pass
 
         if not config.skip_wayback:
-            xss.xssWrapper()
-            sqli.sqliWrapper()
-            crlf.crlfWrapper()
-            lfi.lfiWrapper()
+            # xss.xssWrapper()
+            # sqli.sqliWrapper()
+            # crlf.crlfWrapper()
+            # lfi.lfiWrapper()
             ssrf.ssrfWrapper()
 
     @staticmethod

@@ -29,7 +29,7 @@ def process_allparam_copy(copy,collaborator):
 
     marker = copy.host + str(copy.path) + string
     # print('Inseted marker:             '+marker)
-    value = collaborator + marker
+    value = collaborator + '?' + marker
     for param in params.keys():
         copy.args[param] = value
     # print('New Copy:           {}'.format(copy))
@@ -59,7 +59,7 @@ def ssrfWrapper():
     urls = utils.readFile(config.waybackurls_withquery_live_file)
     processed_urls = set()
     for url in urls:
-        processed_urls.add(process_url(url,config.collaborator))
+        processed_urls.add(process_url(url,config.collaborator).url)
 
     utils.writeFile(processed_urls,config.ssrf_urls_file)
 

@@ -13,7 +13,7 @@ def runqsfuzzSqli(urls_file:str,template_file:str,file_out):
 
 
 def sqliWrapper():
-    # results = runqsfuzzSqli(config.waybackurls_withquery_live_file,config.qsfuzz_sqli_template_path,config.qsfuzz_sqli_result_file)
+    results = runqsfuzzSqli(config.waybackurls_withquery_live_file,config.qsfuzz_sqli_template_path,config.qsfuzz_sqli_result_file)
 
 
     urls = utils.readFile(config.waybackurls_withquery_live_file)

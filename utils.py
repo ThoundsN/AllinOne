@@ -5,6 +5,7 @@ import sqlite3
 from log import logger
 import re
 import config 
+import json 
 
 
 
@@ -152,14 +153,13 @@ def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
 
 
 
-def writeFile(lines:set,file):
+def writeFile(lines,file):
     logger.log("INFO",f"write results to {file}")
     # logger.log("INFO",f"{type(lines)} {lines}")
     
     with file.open('w') as f:
         if isinstance(lines, dict):
-            for k,v in lines.items():
-                f.write(f"{k}   :   {v}")
+            file.write(json.dumps(lines))
         elif any(isinstance(i, tuple) for i in lines):
             for result_line in lines:
                 result_line = "".join(result_line)

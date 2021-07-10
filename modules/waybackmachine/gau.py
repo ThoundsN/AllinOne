@@ -33,31 +33,31 @@ def dedupeUrls(urls_file:str,file_out)->set:
     return 
 
 def gauWrapper():
-    # runGau(config.domain_name,config.waybackurls_file)
-    # if isEmpty(config.waybackurls_file):
-    #     logger.log('INFO',f"Didn't find any waybackurls, skip operation related to wayback machine   ")
-    #     config.skip_wayback = True
-    #     return        
-    # logger.log('INFO',f'Found {lineCount(config.waybackurls_file)} raw  waybackurls ')
+    runGau(config.domain_name,config.waybackurls_file)
+    if isEmpty(config.waybackurls_file):
+        logger.log('INFO',f"Didn't find any waybackurls, skip operation related to wayback machine   ")
+        config.skip_wayback = True
+        return        
+    logger.log('INFO',f'Found {lineCount(config.waybackurls_file)} raw  waybackurls ')
     
 
-    # logger.log('INFO',f'Starting to dedupe waybackurls , only leaves unique urls and  with query urls')
-    # dedupeUrlsWithqeury(config.waybackurls_file,config.waybackurls_withquery_file)
+    logger.log('INFO',f'Starting to dedupe waybackurls , only leaves unique urls and  with query urls')
+    dedupeUrlsWithqeury(config.waybackurls_file,config.waybackurls_withquery_file)
     dedupeUrls(config.waybackurls_file,config.waybackurls_unique_file)
-    # if isEmpty(config.waybackurls_withquery_file):
-    #     logger.log('INFO',f"Didn't find any unique waybackurls with querystring , skip operation related to wayback machine   ")
-    #     config.skip_wayback = True
-    #     return       
-    # logger.log('INFO',f'Found {lineCount(config.waybackurls_withquery_file)}  unique waybackurls with query strings after dedupe')
+    if isEmpty(config.waybackurls_withquery_file):
+        logger.log('INFO',f"Didn't find any unique waybackurls with querystring , skip operation related to wayback machine   ")
+        config.skip_wayback = True
+        return       
+    logger.log('INFO',f'Found {lineCount(config.waybackurls_withquery_file)}  unique waybackurls with query strings after dedupe')
 
-    # logger.log('INFO',f'Starting to check live waybackurls ')
-    # httpx.runHttpx(config.waybackurls_withquery_file,config.waybackurls_withquery_live_file)
-    # if isEmpty(config.waybackurls_withquery_live_file):
-    #     logger.log('INFO',f"Didn't find any live unique waybackurls with querystring , skip operation related to wayback machine   ")
-    #     config.skip_wayback = True
-    #     return      
-    # logger.log('INFO',f'Found {lineCount(config.waybackurls_withquery_live_file)}  unique waybackurls with query strings after dedupe')
-    # logger.log('INFO',f'Live withquery waybackurls saved to   {config.waybackurls_withquery_live_file} ')
+    logger.log('INFO',f'Starting to check live waybackurls ')
+    httpx.runHttpx(config.waybackurls_withquery_file,config.waybackurls_withquery_live_file)
+    if isEmpty(config.waybackurls_withquery_live_file):
+        logger.log('INFO',f"Didn't find any live unique waybackurls with querystring , skip operation related to wayback machine   ")
+        config.skip_wayback = True
+        return      
+    logger.log('INFO',f'Found {lineCount(config.waybackurls_withquery_live_file)}  unique waybackurls with query strings after dedupe')
+    logger.log('INFO',f'Live withquery waybackurls saved to   {config.waybackurls_withquery_live_file} ')
     
     waybackurls_unique = utils.readFile(config.waybackurls_unique_file)
     jsurls = extractJsurls(waybackurls_unique)

@@ -9,6 +9,8 @@ import config
 from os import listdir
 from os.path import isfile, join,abspath
 from jinja2 import Template
+from log import logger
+
 
 import utils
 

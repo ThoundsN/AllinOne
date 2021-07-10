@@ -33,10 +33,10 @@ def processFfufCsv(csvfile_input:str,csvfile_output:str):  #legacy code
 
 
 def ffufWrapper():
-    # logger.log('INFO', f'Brute forcing urls from file  {config.alive_noncdn_urls_file}')
-    # with open(config.alive_noncdn_urls_file,'r') as f:
-    #     for url in f:
-    #         runffuf(url.strip())
+    logger.log('INFO', f'Brute forcing urls from file  {config.alive_noncdn_urls_file}')
+    with open(config.alive_noncdn_urls_file,'r') as f:
+        for url in f:
+            runffuf(url.strip())
 
     csvfiles = utils.getFilesInDir(config.ffuf_runtime_raw_dir,".csv")
     # print(csvfiles)
@@ -46,9 +46,13 @@ def ffufWrapper():
         newcsvfile =  config.ffuf_runtime_processed_dir / os.path.basename(csvfile)
         processFfufCsv(csvfile,newcsvfile)
 
-    ffuf2html.main(config.ffuf_runtime_processed_dir,config.ffuf_result_file)
+    ffuf2html.main(config.ffuf_runtime_processed_dir,config.ffuf_result_html)
     
 
-    ffuf403.fuzzPaths(csvfiles,config.ffuf_runtime_403_fuzzingpath_urls_result_csv,config.ffuf_runtime_403_fuzzingpath_result_csv)   
-    processFfufCsv(config.ffuf_runtime_403_fuzzingpath_result_csv,config.ffuf_runtime_403_fuzzingpath_processed_csv)
-    ffuf2html.csvfile2html(config.ffuf_runtime_403_fuzzingpath_processed_csv,config.ffuf_403_result_html)
+    if ffuf403.fuzzPaths(csvfiles,config.ffuf_runtime_fuzzingpath_urls_file,config.ffuf_runtime_fuzzingpath_raw_csv) :
+        processFfufCsv(config.ffuf_runtime_fuzzingpath_raw_csv,config.ffuf_runtime_fuzzingpath_processed_csv)
+        ffuf2html.csvfile2html(config.ffuf_runtime_fuzzingpath_processed_csv,config.ffuf_403_result_html)
+
+    else:
+        logger.log('INFO', f"There aren't any 403 urls in ffuf result, skipping 403 path fuzz")
+        

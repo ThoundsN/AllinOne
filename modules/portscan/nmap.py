@@ -14,10 +14,15 @@ async def runNmap(ip:str,ports:set) -> str:
     return stdout.decode()
 
 async def nmapTasks(ip_port:dict):
-    tasks = [asyncio.create_task(runNmap(ip,ports_set)) for ip,ports_set in ip_port.items()]
-    nmap_results =  await asyncio.gather(*tasks)
-    logger.log('INFO', f'Debug:  nmap_results: {nmap_results}')
-
+    '''
+    # some machine have more than 10000+ ports opend
+    '''
+    try:
+        tasks = [asyncio.create_task(runNmap(ip,ports_set)) for ip,ports_set in ip_port.items() if len(ip_port[ip]) < 50]
+        nmap_results =  await asyncio.gather(*tasks)
+        logger.log('INFO', f'Debug:  nmap_results: {nmap_results}')
+    except:
+        logger.exception("A exception happened")
     return nmap_results
 
 

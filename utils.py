@@ -33,15 +33,15 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False,pty
             result = run(command,pty=pty)
         else:
             result = run(command,warn=True,pty=pty)
-            if not result.ok:
-                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
+            # if not result.ok:
+            #     logger.log("FATAL",f"invokeCommand error: {result.stderr}")
         if return_stdout:
             return result.stdout  #string
     else:
         if not stop_when_exception:
-            result = run(command,hide='out',pty=pty)
+            result = run(command,hide='both',pty=pty)
         else:
-            result = run(command,warn=True,hide='out',pty=pty)
+            result = run(command,warn=True,hide='both',pty=pty)
             if not result.ok:
                 logger.log("FATAL",f"invokeCommand error: {result.stderr}")
         if return_stdout:
@@ -156,24 +156,28 @@ def querySqlite(domain:str,sqlite_path:str,query:str)-> set:
 def writeFile(lines,file):
     logger.log("INFO",f"write results to {file}")
     # logger.log("INFO",f"{type(lines)} {lines}")
-    
-    with file.open('w') as f:
-        if isinstance(lines, dict):
-            file.write(json.dumps(lines))
-        elif any(isinstance(i, tuple) for i in lines):
-            for result_line in lines:
-                result_line = "".join(result_line)
-                f.write(result_line+'\n')
-        else:
-            for result_line in lines:
-            # logger.log("INFO",f" {type(result_line)}{result_line}")
-                f.write(result_line+'\n')
+    try:    
+        with file.open('w') as f:
+            if isinstance(lines, dict):
+                file.write(json.dumps(lines))
+            elif any(isinstance(i, tuple) for i in lines):
+                for result_line in lines:
+                    result_line = "".join(result_line)
+                    f.write(result_line+'\n')
+            else:
+                for result_line in lines:
+                # logger.log("INFO",f" {type(result_line)}{result_line}")
+                    f.write(result_line+'\n')
+    except:
+        logger.exception("A exception happened")
 
 #stupid bug:     with open(file,'w') as f:
 def readFile(file:str):
     with open(file,'r') as f:
         lines = f.readlines()
     return lines
+    
+        
 
 def filterNegativeFile(result_file:str):
     is_vulneralbe=False

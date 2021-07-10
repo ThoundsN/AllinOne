@@ -242,7 +242,8 @@ def fuzzPaths(raw_ffufcsvs:list,fuzzing_urls_file:str,ffuf_outfile:str):
     :return:
     '''
     urls_403 = set([extractUrl(raw_csvfile) for raw_csvfile in raw_ffufcsvs])
-
+    if not urls_403:
+        return False
     fuzzing_urls = set()
     for url in urls_403:
         fuzzing_urls |= process_url(url)
@@ -258,6 +259,8 @@ def fuzzPaths(raw_ffufcsvs:list,fuzzing_urls_file:str,ffuf_outfile:str):
     logger.log('INFO', f'Running ffuf with command {cmd1}')
 
     invokeCommand(cmd1)
+
+    return True
 
 
 def fuzzHeaders():

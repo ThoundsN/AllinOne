@@ -16,7 +16,8 @@ from modules.other import screenshot
 import utils
 import config
 from datetime import datetime
-import log
+import log 
+
 
 
 
@@ -66,7 +67,7 @@ class AllInOne(object):
         # config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
         # config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
 
-        config.current_data_dir = pathlib.Path("/root/data/paddypower.com/07_08_06_01/")
+        config.current_data_dir = pathlib.Path("/root/data/argenta.be/07_09_14_46/")
         config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
 
 
@@ -85,9 +86,9 @@ class AllInOne(object):
         config.ffuf_runtime_processed_dir = config.runtime_subdir / 'ffuf_runtime/processed'
         config.ffuf_runtime_process403_dir = config.runtime_subdir / 'ffuf_runtime/process_403'
 
-        config.ffuf_runtime_403_fuzzingpath_urls_result_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_urls.txt'
-        config.ffuf_runtime_403_fuzzingpath_result_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_result.csv'
-        config.ffuf_runtime_403_fuzzingpath_processed_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_processed.csv'
+        config.ffuf_runtime_fuzzingpath_urls_file = config.ffuf_runtime_process403_dir / 'fuzzingpath_urls.txt'
+        config.ffuf_runtime_fuzzingpath_raw_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_raw.csv'
+        config.ffuf_runtime_fuzzingpath_processed_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_processed.csv'
         config.subdomains_file = config.runtime_subdir / 'subdomains.txt'
         config.alive_urls_file = config.runtime_subdir / 'alive_urls.txt'
         config.alive_noncdn_urls_file = config.runtime_subdir / 'alive_noncdn_urls.txt'
@@ -102,7 +103,7 @@ class AllInOne(object):
 
         config.jsfirebase_html = config.result_subdir / 'jsfirebase.html'
         config.nmap_result_file = config.result_subdir / 'nmap_result.txt'
-        config.ffuf_result_file = config.result_subdir / 'ffuf.html'
+        config.ffuf_result_html = config.result_subdir / 'ffuf.html'
         config.ffuf_403_result_html = config.result_subdir / 'ffuf403.html'
         config.xsspy_result_file = config.result_subdir / 'xsspy_result.txt'
         config.kxss_result_file = config.result_subdir / 'kxss_result.txt'
@@ -111,12 +112,16 @@ class AllInOne(object):
         config.qsfuzz_sqli_result_file = config.result_subdir / 'sqli_result.txt'
         config.time_sqli_result_file = config.result_subdir / 'time_sqli_result.txt'
 
+    def configLog(self):
+        log.logger.add(config.log_path, level='DEBUG', format=log.logfile_fmt, enqueue=True, encoding='utf-8',backtrace=True, diagnose=True)
+        log.logger.log('INFO',f'Starting running allinone with {self.domain}')
+
+    @log.logger.catch
     def run(self):
         self.configDataDir(self.domain)
         self.mkDataDir()
+        self.configLog()
 
-        log.logger.add(config.log_path, level='DEBUG', format=log.logfile_fmt, enqueue=True, encoding='utf-8')
-        log.logger.log('INFO',f'Starting running allinone with {self.domain}')
 
         # onefall.oneforallWrapper()
 
@@ -125,19 +130,19 @@ class AllInOne(object):
         # screenshot.webscreenshotWrapper()
         # masscan.masscanWrapper()
         # nmap.nmapWrapper()
-        # ffuf.ffufWrapper()
+        ffuf.ffufWrapper()
 
-        # gau.gauWrapper()
+        gau.gauWrapper()
         if not config.skip_wayback_jsfiles and not config.skip_wayback:
-            # jsentropy.dumpsterDriverWrapper()
-            # jsfirebase.jsfirebaseWrapper()
+            jsentropy.dumpsterDriverWrapper()
+            jsfirebase.jsfirebaseWrapper()
             pass
 
         if not config.skip_wayback:
-            # xss.xssWrapper()
-            # sqli.sqliWrapper()
-            # crlf.crlfWrapper()
-            # lfi.lfiWrapper()
+            xss.xssWrapper()
+            sqli.sqliWrapper()
+            crlf.crlfWrapper()
+            lfi.lfiWrapper()
             ssrf.ssrfWrapper()
 
     @staticmethod

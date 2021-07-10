@@ -69,7 +69,7 @@ It's recommend to put the result folder after autoindex enabled nginx web direct
 ## ⚓ Code/Feature flow 
 
 - Feature  mindmap
-![](./images/allinone.png)
+![](./images/Allinone.png)
 
 
 

@@ -64,11 +64,9 @@ class AllInOne(object):
 
         
 
-        # config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
-        # config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
+        config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
+        config.log_path = config.current_data_dir/f'AllInOne.txt'  # AllInOne日志保存路径
 
-        config.current_data_dir = pathlib.Path("/root/data/argenta.be/07_09_14_46/")
-        config.log_path = config.current_data_dir/f'AllInOne.log'  # AllInOne日志保存路径
 
 
 
@@ -123,13 +121,13 @@ class AllInOne(object):
         self.configLog()
 
 
-        # onefall.oneforallWrapper()
+        onefall.oneforallWrapper()
 
 
 
-        # screenshot.webscreenshotWrapper()
-        # masscan.masscanWrapper()
-        # nmap.nmapWrapper()
+        screenshot.webscreenshotWrapper()
+        masscan.masscanWrapper()
+        nmap.nmapWrapper()
         ffuf.ffufWrapper()
 
         gau.gauWrapper()

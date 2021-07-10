@@ -159,7 +159,7 @@ def writeFile(lines,file):
     try:    
         with file.open('w') as f:
             if isinstance(lines, dict):
-                file.write(json.dumps(lines))
+                f.write(json.dumps(lines))
             elif any(isinstance(i, tuple) for i in lines):
                 for result_line in lines:
                     result_line = "".join(result_line)

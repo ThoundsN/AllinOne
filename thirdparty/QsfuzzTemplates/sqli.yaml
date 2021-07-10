@@ -7,7 +7,7 @@ rules:
       responseCodes:
         - 500
     heuristics:
-      injection: "[[originalvalue]]--'"
+      injection: "[[originalvalue]]'-- "
       baselineMatches:
         - "responseCode"
   SqlInjection_500_1:
@@ -29,18 +29,7 @@ rules:
       responseCodes:
         - 500
     heuristics:
-      injection: "[[originalvalue]]\\'"
-      baselineMatches:
-        - "responseCode"
-  SqlInjection_500_3:
-    description: Test for potential SQL injections by injecting characters to get 500 response
-    injections:
-      - "[[originalvalue]]'"
-    expectation:
-      responseCodes:
-        - 500
-    heuristics:
-      injection: "[[originalvalue]])%23"
+      injection: "[[originalvalue]]'#"
       baselineMatches:
         - "responseCode"
   SqlInjection_error:

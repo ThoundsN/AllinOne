@@ -20,4 +20,5 @@ def sqliWrapper():
     logger.log('INFO',f'Starting to test blind time based sqli')
     timeSqli_results = timeSqli.main(urls)
     if timeSqli_results:
+        logger.log('INFO',f'Found potential vulnerble sqli url , saved to {config.time_sqli_result_file}')
         utils.writeFile(timeSqli_results,config.time_sqli_result_file)

@@ -57,10 +57,13 @@ class AllInOne(object):
             if key.endswith("dir"):
                 utils.makeDir(varialbes[key])
 
+
+# todo adding  a option using previous unifinished  folder instead of creating a new one by checking files.
     @staticmethod
     def configDataDir(domain_name):
-        # config.domain_name = domain_name
+        config.domain_name = domain_name
         config.start_time = datetime.today().strftime('%m_%d_%H_%M')
+        # config.start_time = '10_18_16_11'
 
         
 

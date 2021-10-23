@@ -32,6 +32,30 @@ _payloads = list(filter(None, _payloads))
 
 
 
+#https://stackoverflow.com/questions/52232177/runtimeerror-timeout-context-manager-should-be-used-inside-a-task
+def asyncio_run(future, as_task=True):
+    """
+    A better implementation of `asyncio.run`.
+
+    :param future: A future or task or call of an async method.
+    :param as_task: Forces the future to be scheduled as task (needed for e.g. aiohttp).
+    """
+
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:  # no event loop running:
+        loop = asyncio.new_event_loop()
+        return loop.run_until_complete(_to_task(future, as_task, loop))
+    else:
+        nest_asyncio.apply(loop)
+        return asyncio.run(_to_task(future, as_task, loop))
+
+
+def _to_task(future, as_task, loop):
+    if not as_task or isinstance(future, asyncio.Task):
+        return future
+    return loop.create_task(future)
+
 def deletePayload(_payloads,testurl:str):
     for payload in _payloads:
         urlencoded_payload = urllib.parse.quote_plus(payload)
@@ -92,6 +116,9 @@ async def testUrl(session, url,flag=1,timeout=60):
             return url,runtime
             
 
+
+
+
 # return:  [('http://www.google.com', 21.05916452407837), ('https://www.example.org', 1.0362162590026855), ('https://stackoverflow.com/', 3.242276668548584), ('https://www.wikipedio.org', 0.8240408897399902)]
 async def testUrlWrapper(async_loop, urls,flag=1):
     async with aiohttp.ClientSession(loop=async_loop) as session:
@@ -99,6 +126,7 @@ async def testUrlWrapper(async_loop, urls,flag=1):
         results = await asyncio.gather(*corou_to_execute)   #results [('a', 'b'), ('a', 'b'), ('a', 'b'),null]
         results = list(filter(None, results))
         return results          #results [('a', float), ('a', float), ('a', float)]
+
 
 #edgecase results empty:  []
 #data :  {"https://rawurl.com":{"testurl":test_url,"testtime",test_time}"}
@@ -142,6 +170,7 @@ def main(urls:set):
 
     event_loop = asyncio.get_event_loop()
     results = event_loop.run_until_complete(testUrlWrapper(event_loop, testurls))
+    # results = asyncio.run(testUrlWrapper(event_loop, testurls))
     data = processFirstResult(results)
     if not data:
         logger.log('INFO',f"Maybe there aren't any vulnerble easy to detect time-based sqli in the input urls")

@@ -37,3 +37,4 @@ python-dotenv
 requests_futures
 colored
 opencv-python-headless
+nest_asyncio 

@@ -13,12 +13,14 @@ def runqsfuzzSqli(urls_file:str,template_file:str,file_out):
 
 
 def runtimeSqli():
-    urls = utils.readFile(config.waybackurls_withquery_live_file)
+    urls = utils.readFile(config.merged_withqueryurl_file)
     logger.log('INFO',f'Starting to test blind time based sqli')
     timeSqli_results = timeSqli.main(urls)
     if timeSqli_results:
         logger.log('INFO',f'Found potential vulnerble sqli url , saved to {config.time_sqli_result_file}')
         utils.writeFile(timeSqli_results,config.time_sqli_result_file)
+        utils.notify(config.time_sqli_result_file)
+
 
 
 def sqliWrapper():

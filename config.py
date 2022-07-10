@@ -14,6 +14,7 @@ verbose_log = False
 
 root_data_dir = pathlib.Path(os.getenv('root_data_dir'))              #where to save your data
 collaborator = os.getenv('collaborator')
+dataurl = os.getenv('dataurl')
 
 
 allinone_dir = pathlib.Path(__file__).parent  # /allinone/
@@ -33,6 +34,7 @@ waybackmachine_downloader_command = "wayback_machine_downloader"
 urldedupe_command = binary_dir/"urldedupe"
 aria2c_command = "aria2c"
 dumpsterdriver_command = thirdparty_dir/"DumpsterDiver"/"DumpsterDiver.py"
+config.crawler_command = thirdparty_dir/"crawler"/"driver.py"
 httpx_command = binary_dir/"httpx"
 masscan_command= binary_dir/"masscan"
 nmap_command="nmap"

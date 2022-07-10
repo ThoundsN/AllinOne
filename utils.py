@@ -11,7 +11,7 @@ import json
 
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Runner.run
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Result
-def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False,pty=False):
+def invokeCommand(command:str,*,stop_when_exception=False,return_stdout=False,pty=False):
     '''
 
     :param command:
@@ -19,33 +19,19 @@ def invokeCommand(command:str,*,stop_when_exception=True,return_stdout=False,pty
     :param return_stdout:
     :return:  str if return_stdout
     '''
-    if config.verbose_log:
-        if not stop_when_exception:
-            result = run(command,out_stream=config.log_path,pty=pty)
-        else:
-            result = run(command,out_stream=config.log_path,warn=True,pty=pty)
-            if not result.ok:
-                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
-        if return_stdout:
-            return result.stdout  #string        
-    elif  config.verbose_stdout:
-        if not stop_when_exception:
-            result = run(command,pty=pty)
-        else:
-            result = run(command,warn=True,pty=pty)
-            # if not result.ok:
-            #     logger.log("FATAL",f"invokeCommand error: {result.stderr}")
-        if return_stdout:
-            return result.stdout  #string
+
+    if not stop_when_exception:
+        result = run(command,hide='both',pty=pty)
     else:
-        if not stop_when_exception:
-            result = run(command,hide='both',pty=pty)
-        else:
+        try:
             result = run(command,warn=True,hide='both',pty=pty)
             if not result.ok:
                 logger.log("FATAL",f"invokeCommand error: {result.stderr}")
-        if return_stdout:
-            return result.stdout  #string 
+        except Exception as e:
+            logger.log('FATAL', f' exception raised: {e}  ')
+            pass
+    if return_stdout:
+        return result.stdout  #string 
 
 
 def text2set(text:str)->set:
@@ -121,11 +107,10 @@ def downloadLinksInFile(file_path:str):
     invokeCommand(cmd)
 
 
-def location2href(location:str):
+def location2href(filelocation:str):
     import config
-    #prefix = "http://jsrecon.ragnarokv.site/links/"
-    prefix = config.collaborator+ '/links/'
-    pieces = location.split('/')
+    prefix = config.dataurl
+    pieces = filelocation.split('/')
     del pieces[6]
     del pieces[0:5]
     suffix = "/".join(pieces)
@@ -135,6 +120,7 @@ def location2href(location:str):
 def replaceUnderscore(domain:str):
     domain = domain.replace('/','_')
     domain = domain.replace('：','_')
+    domain = domain.replace('-','_')
     return domain.replace('.','_')
 
 
@@ -188,7 +174,9 @@ def filterNegativeFile(result_file:str):
 
     if is_vulneralbe:
         p= Path(result_file)
-        p.rename(Path(p.parent, f"vul_{p.stem}{p.suffix}"))
+        newfilename = f"vul_{p.stem}{p.suffix}"
+        p.rename(Path(p.parent, newfilename))
+        notify(newfilename)
 
 
 def checkOneDependency(command_path):   # exit code 126,127 of invoke.run is bad 
@@ -223,3 +211,24 @@ def lineCount(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
+
+
+def dedupeUrlsWithqeury(urls_file:str,file_out):
+    cmd = f"{config.urldedupe_command} -qs -s -u {urls_file}  >  {file_out}  "
+    logger.log('INFO',f'Running urldedupe with command {cmd}')
+    invokeCommand(cmd)
+    return 
+
+def dedupeUrls(urls_file:str,file_out):
+    cmd = f"{config.urldedupe_command} -s -u {urls_file}  >  {file_out}  "
+    logger.log('INFO',f'Running urldedupe with command {cmd}')
+    invokeCommand(cmd)
+    return 
+
+
+
+def notify(file_path):
+    file_url = location2href(file_path)
+    with open("/root/data/notify.txt","a") as f:
+        f.write(file_url)
+        f.write("\n")

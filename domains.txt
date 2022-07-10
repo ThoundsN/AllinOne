@@ -1,0 +1,2 @@
+allegro.pl
+allegroapi.io

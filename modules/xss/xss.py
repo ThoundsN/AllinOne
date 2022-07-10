@@ -21,10 +21,10 @@ def runKxss(urls_file:str,file_out):
 
 
 def xssWrapper():
-    runXsspy(config.waybackurls_withquery_live_file,config.xsspy_result_file)
+    runXsspy(config.merged_withqueryurl_file,config.xsspy_result_file)
     logger.log('INFO', f'xsspy results saved to  {config.xsspy_result_file}')
     
-    kxss_results = runKxss(config.waybackurls_withquery_live_file,config.kxss_result_file)
+    kxss_results = runKxss(config.merged_withqueryurl_file,config.kxss_result_file)
     logger.log('INFO', f'xsspy results saved to  {config.kxss_result_file}')
 
 

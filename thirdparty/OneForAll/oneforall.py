@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # coding=utf-8
 
 """
@@ -32,7 +32,7 @@ blue = '\033[01;34m'
 red = '\033[1;31m'
 end = '\033[0m'
 
-version = 'v0.4.3'
+version = 'v0.4.5'
 message = white + '{' + red + version + ' #dev' + white + '}'
 
 oneforall_banner = f"""

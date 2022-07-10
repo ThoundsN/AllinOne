@@ -12,5 +12,5 @@ def runLfipy(urls_file:str,result_file:str) :
 
 
 def lfiWrapper():
-    runLfipy(config.waybackurls_withquery_live_file,config.lfipy_result_file)
+    runLfipy(config.merged_withqueryurl_file,config.lfipy_result_file)
     utils.filterNegativeFile(config.lfipy_result_file)

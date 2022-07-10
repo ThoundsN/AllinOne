@@ -14,7 +14,6 @@ stdout_fmt = '<cyan>{time:HH:mm:ss,SSS}</cyan> ' \
 # 日志文件记录格式
 logfile_fmt = '<light-green>{time:YYYY-MM-DD HH:mm:ss,SSS}</light-green> ' \
               '[<level>{level: <5}</level>] ' \
-              '<cyan>{process.name}({process.id})</cyan>:' \
               '<cyan>{thread.name: <18}({thread.id: <5})</cyan> | ' \
               '<blue>{module}</blue>.<blue>{function}</blue>:' \
               '<blue>{line}</blue> - <level>{message}</level>'
@@ -30,5 +29,5 @@ logger.level(name='FATAL', no=50, color='<RED><bold>', icon='☠️')
 
 # 如果你想在命令终端静默运行AllInOne，可以将以下一行中的level设置为QUITE
 # 命令终端日志级别默认为INFO
-logger.add(sys.stderr, level='INFO', format=stdout_fmt, enqueue=True)
+logger.add(sys.stdout, level='INFO', format=stdout_fmt, enqueue=True)
 # 日志文件默认为级别为DEBUG

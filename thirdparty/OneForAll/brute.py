@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 # coding=utf-8
 
 """
@@ -10,13 +10,9 @@ OneForAll subdomain brute module
 import gc
 import json
 import time
-import secrets
 
 import exrex
 import fire
-import tenacity
-from dns.exception import Timeout
-from dns.resolver import NXDOMAIN, YXDOMAIN, NoAnswer, NoNameservers
 
 import export
 from common import utils

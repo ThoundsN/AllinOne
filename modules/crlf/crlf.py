@@ -12,5 +12,5 @@ def runcrlfpy(urls_file:str,result_file:str) :
 
 
 def crlfWrapper():
-    runcrlfpy(config.waybackurls_withquery_live_file,config.crlfpy_result_file)
+    runcrlfpy(config.merged_withqueryurl_file,config.crlfpy_result_file)
     utils.filterNegativeFile(config.crlfpy_result_file)

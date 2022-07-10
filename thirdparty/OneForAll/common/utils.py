@@ -54,7 +54,7 @@ def gen_fake_header():
     """
     Generate fake request headers
     """
-    headers = settings.request_default_headers
+    headers = settings.request_default_headers.copy()
     if not isinstance(headers, dict):
         headers = dict()
     if settings.enable_random_ua:
@@ -192,7 +192,7 @@ def check_path(path, name, fmt):
     else:
         path = default_path
     path = Path(path)
-    if not path.suffix:  # 输入是目录的情况
+    if path.is_dir():  # 输入是目录的情况
         path = path.joinpath(filename)
     parent_dir = path.parent
     if not parent_dir.exists():

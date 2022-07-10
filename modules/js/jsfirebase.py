@@ -19,6 +19,7 @@ def jsfirebaseWrapper():
         logger.log('INFO',f' {jshrefs}')
 
         utils.writeFile(jshrefs,config.jsfirebase_html)
+        utils.notify(config.jsfirebase_html)
         logger.log('INFO',f'firebaseio results saved to {config.jsfirebase_html}')
     else:
         logger.log('INFO',f'Didn\'t  find any firebaseio urls ')

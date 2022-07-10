@@ -56,7 +56,7 @@ def process_url(url,collaborator):
 
 
 def ssrfWrapper():
-    urls = utils.readFile(config.waybackurls_withquery_live_file)
+    urls = utils.readFile(config.merged_withqueryurl_file)
     processed_urls = set()
     for url in urls:
         processed_urls.add(process_url(url,config.collaborator).url)

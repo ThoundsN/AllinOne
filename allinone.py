@@ -13,6 +13,7 @@ from modules.ssrf import ssrf
 from modules.waybackmachine import gau,waybackdownloader
 from modules.xss import xss
 from modules.other import screenshot
+from modules.crawler import crawler
 import utils
 import config
 from datetime import datetime
@@ -37,15 +38,8 @@ class AllInOne(object):
         python3 AllInOne.py run example.com 
 
     """
-    def __init__(self,domain=None,verbose=None):
+    def __init__(self,domain=None):
         self.domain = domain
-        config.domain_name = domain
-
-        if verbose == "stdout":
-            config.stdout = True
-        elif verbose == "log":
-            config.log = True
-            
 
 
 
@@ -69,6 +63,7 @@ class AllInOne(object):
 
         config.current_data_dir =  config.root_data_dir/config.domain_name/config.start_time
         config.log_path = config.current_data_dir/f'AllInOne.txt'  # AllInOne日志保存路径
+        config.exception_path = "/root/docker-nginx-php-mysql/web/public/data/exceptions.txt"
 
 
 
@@ -90,6 +85,9 @@ class AllInOne(object):
         config.ffuf_runtime_fuzzingpath_urls_file = config.ffuf_runtime_process403_dir / 'fuzzingpath_urls.txt'
         config.ffuf_runtime_fuzzingpath_raw_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_raw.csv'
         config.ffuf_runtime_fuzzingpath_processed_csv = config.ffuf_runtime_process403_dir / 'fuzzingpath_processed.csv'
+        config.crawler_output = config.runtime_subdir / 'crawlerurls.txt'
+        config.raw_merged_withqueryurl_file = config.runtime_subdir / 'raw_merged_withqueryurls.txt'
+        config.merged_withqueryurl_file = config.runtime_subdir / 'merged_withqueryurls.txt'
         config.subdomains_file = config.runtime_subdir / 'subdomains.txt'
         config.alive_urls_file = config.runtime_subdir / 'alive_urls.txt'
         config.alive_noncdn_urls_file = config.runtime_subdir / 'alive_noncdn_urls.txt'
@@ -115,36 +113,101 @@ class AllInOne(object):
 
     def configLog(self):
         log.logger.add(config.log_path, level='DEBUG', format=log.logfile_fmt, enqueue=True, encoding='utf-8',backtrace=True, diagnose=True)
+        log.logger.add(config.exception_path, level='ERROR', format=log.logfile_fmt, enqueue=True, encoding='utf-8',backtrace=True, diagnose=True)
         log.logger.log('INFO',f'Starting running allinone with {self.domain}')
 
     @log.logger.catch
     def run(self):
+        config.domain_name = self.domain
+
+
         self.configDataDir(self.domain)
         self.mkDataDir()
         self.configLog()
 
+        try:
+            onefall.oneforallWrapper()
+        except:
+            log.logger.exception("onefall goes wrong ")
 
-        onefall.oneforallWrapper()
+        # screenshot.webscreenshotWrapper()
+        # masscan.masscanWrapper()
+        # nmap.nmapWrapper()
+        # ffuf.ffufWrapper()
+        
+        try:
+            crawler.crawlerWrapper()
+        except:
+            log.logger.exception("crawler goes wrong ")
+
+        try:
+            gau.gauWrapper()
+        except:
+            log.logger.exception("gau goes wrong ")
+
+
+        try:
+            crawler_urls = utils.readFile(config.crawler_output)
+            wayback_query_live_urls = utils.readFile(config.waybackurls_withquery_live_file)
+            merged_urls = set(crawler_urls+wayback_query_live_urls)
+            utils.writeFile(merged_urls,config.merged_withqueryurl_file)
+            utils.dedupeUrlsWithqeury(config.raw_merged_withqueryurl_file,config.merged_withqueryurl_file)
+        except:
+            log.logger.exception("merge query urls file goes wrong ")
+            
 
 
 
-        screenshot.webscreenshotWrapper()
-        masscan.masscanWrapper()
-        nmap.nmapWrapper()
-        ffuf.ffufWrapper()
-
-        gau.gauWrapper()
         if not config.skip_wayback_jsfiles and not config.skip_wayback:
-            jsentropy.dumpsterDriverWrapper()
-            jsfirebase.jsfirebaseWrapper()
-            pass
+            try: 
+                jsentropy.dumpsterDriverWrapper()
+            excpet:
+                log.logger.exception("jsentropy goes wrong ")
 
-        if not config.skip_wayback:
+            try: 
+                jsfirebase.jsfirebaseWrapper()
+            excpet:
+                log.logger.exception("jsfirebase goes wrong ")
+
+        try: 
             xss.xssWrapper()
-            sqli.sqliWrapper()
-            crlf.crlfWrapper()
+        excpet:
+            log.logger.exception("xss goes wrong ")       
+
+        try: 
             lfi.lfiWrapper()
+        excpet:
+            log.logger.exception("lfi goes wrong ")   
+
+
+        try: 
+            crlf.crlfWrapper()
+        excpet:
+            log.logger.exception("crlf goes wrong ")   
+
+        try: 
             ssrf.ssrfWrapper()
+        excpet:
+            log.logger.exception("ssrf goes wrong ")   
+
+        try: 
+            sqli.sqliWrapper()
+        excpet:
+            log.logger.exception("sqli goes wrong")                                       
+
+
+    @staticmethod
+    def mass(file):
+        with open(file) as f:
+            lines =  filter(None, f.readlines())
+        
+        for line in lines:
+            try:
+                line = line.strip()
+                a = AllInOne(domain=line)
+                a.run()
+            except Exception as e:
+                continue
 
     @staticmethod
     def check():   #checkDependencies

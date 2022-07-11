@@ -35,6 +35,8 @@ def processDumpsterResult(json_file:str,processed_file:str):
     with open(processed_file,'w') as f:
         f.write(processed_json)
 
+
+@exception_handler
 def dumpsterDriverWrapper():
 
     os.chdir(config.runtime_jsfiles_dir)

@@ -10,7 +10,7 @@ def runLfipy(urls_file:str,result_file:str) :
 
 
 
-
+@exception_handler
 def lfiWrapper():
     runLfipy(config.merged_withqueryurl_file,config.lfipy_result_file)
     utils.filterNegativeFile(config.lfipy_result_file)

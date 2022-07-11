@@ -10,7 +10,7 @@ def runcrlfpy(urls_file:str,result_file:str) :
 
 
 
-
+@exception_handler
 def crlfWrapper():
     runcrlfpy(config.merged_withqueryurl_file,config.crlfpy_result_file)
     utils.filterNegativeFile(config.crlfpy_result_file)

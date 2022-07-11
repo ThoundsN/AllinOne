@@ -95,7 +95,7 @@ class Driver:
 
     def cb_request_after_finish(self,queue, queue_item, new_queue_items):
         # print(queue_item.response.text)
-        if queue_item.response.status_code != 404:
+        if queue_item.response.status_code not in  [401,403,404,405,502,501,406]:
             self.__outfile.write(queue_item.request.url)
             self.__outfile.write("\n")
         print("Found url: {}".format(queue_item.request.url))

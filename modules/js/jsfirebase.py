@@ -9,7 +9,9 @@ def checkFirebaseInJs(jsfile:str)-> str:
     with open(jsfile,'r') as f:
         if 'firebaseio' in f.read():
             return  location2href(jsfile)
-
+            
+            
+@exception_handler
 def jsfirebaseWrapper():
     logger.log('INFO',f'Starting to check firebaseio urls in jsfiles')
     jsfiles = getAllJsfiles(config.runtime_jsfiles_dir)

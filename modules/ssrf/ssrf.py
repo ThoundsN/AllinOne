@@ -54,7 +54,7 @@ def process_url(url,collaborator):
     #         new_furl = process_oneparam_copy(f.copy(), param,collaborator)
     #         print(new_furl)
 
-
+@exception_handler
 def ssrfWrapper():
     urls = utils.readFile(config.merged_withqueryurl_file)
     processed_urls = set()

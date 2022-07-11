@@ -3,7 +3,7 @@ import utils
 from log import logger
 import re
 import os
-from utils import invokeCommand,downloadLinksInFile,makeDir,text2set,isEmpty,lineCount
+from utils import invokeCommand,downloadLinksInFile,makeDir,text2set,isEmpty,lineCount,dedupeUrlsWithqeury,dedupeUrls
 from modules.hostalive import httpx
 
 def runGau(domain:str,file_out) -> set:
@@ -20,18 +20,20 @@ def extractJsurls(waybackurls:set) -> set:
             jsurls.add(url)
     return jsurls
 
-def dedupeUrlsWithqeury(urls_file:str,file_out)->set:
-    cmd = f"{config.urldedupe_command} -qs -s -u {urls_file}  >  {file_out}  "
-    logger.log('INFO',f'Running urldedupe with command {cmd}')
-    invokeCommand(cmd)
-    return 
+# def dedupeUrlsWithqeury(urls_file:str,file_out)->set:
+#     cmd = f"{config.urldedupe_command} -qs -s -u {urls_file}  >  {file_out}  "
+#     logger.log('INFO',f'Running urldedupe with command {cmd}')
+#     invokeCommand(cmd)
+#     return 
 
-def dedupeUrls(urls_file:str,file_out)->set:
-    cmd = f"{config.urldedupe_command} -s -u {urls_file}  >  {file_out}  "
-    logger.log('INFO',f'Running urldedupe with command {cmd}')
-    invokeCommand(cmd)
-    return 
+# def dedupeUrls(urls_file:str,file_out)->set:
+#     cmd = f"{config.urldedupe_command} -s -u {urls_file}  >  {file_out}  "
+#     logger.log('INFO',f'Running urldedupe with command {cmd}')
+#     invokeCommand(cmd)
+#     return 
 
+
+@exception_handler
 def gauWrapper():
     runGau(config.domain_name,config.waybackurls_file)
     if isEmpty(config.waybackurls_file):

@@ -37,6 +37,7 @@ def getIPNoncdn(domain:str,sqlite_path:str)-> set:
             s.update(string.split(","))
     return s
 
+@exception_handler
 def oneforallWrapper():
     domain = config.domain_name
     runoneforall(domain)

@@ -6,11 +6,49 @@ from log import logger
 import re
 import config 
 import json 
+import errno
+import os
+import signal
+import functools
+import time
+
+def exception_handler(func):
+    def inner_function(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except KeyboardInterrupt:
+            logger.exception('Keyboard interrupt caught')
+            exit()
+        except:
+            logger.exception(f"{func.__name__} goes wrong")
+
+    return inner_function
+
+
+def timeout(seconds=10, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wrapper
+
+    return decorator
 
 
 
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Runner.run
 #http://docs.pyinvoke.org/en/stable/api/runners.html#invoke.runners.Result
+@timeout(33333)
 def invokeCommand(command:str,*,stop_when_exception=False,return_stdout=False,pty=False):
     '''
 
@@ -25,10 +63,8 @@ def invokeCommand(command:str,*,stop_when_exception=False,return_stdout=False,pt
     else:
         try:
             result = run(command,warn=True,hide='both',pty=pty)
-            if not result.ok:
-                logger.log("FATAL",f"invokeCommand error: {result.stderr}")
         except Exception as e:
-            logger.log('FATAL', f' exception raised: {e}  ')
+            logger.exception('FATAL', f' invokecommand error: {e}  ')
             pass
     if return_stdout:
         return result.stdout  #string 
@@ -155,13 +191,17 @@ def writeFile(lines,file):
                 # logger.log("INFO",f" {type(result_line)}{result_line}")
                     f.write(result_line+'\n')
     except:
-        logger.exception("A exception happened")
+        logger.exception(f"write file exception :  {file} ")
 
 #stupid bug:     with open(file,'w') as f:
 def readFile(file:str):
-    with open(file,'r') as f:
-        lines = f.readlines()
-    return lines
+    try:
+        with open(file,'r') as f:
+            lines = f.read().splitlines()
+        return lines
+    except:
+        logger.exception(f"read file exception  : {file}")
+
     
         
 
@@ -211,6 +251,15 @@ def lineCount(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
+
+def isUrlqueryFileUseful(fname):
+    count = lineCount(fname)
+    if count < 20 :
+        return False
+    with open(fname,'r') as f:
+        if '?' not in f.read():
+            return False
+    return True    
 
 
 def dedupeUrlsWithqeury(urls_file:str,file_out):

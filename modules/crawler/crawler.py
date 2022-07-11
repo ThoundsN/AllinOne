@@ -28,10 +28,13 @@ def crawlHistoryurls():
     for url in lucky_urls:
         runcrawler(url,config.crawler_output)
 
+
+@exception_handler
 def crawlerWrapper():
     urls = readFile(config.alive_urls_file)
     logger.log('INFO',f'Starting crawler urls ')
     for url in urls:
+        url = url.strip()
         runcrawler(url,config.crawler_output)
 
     crawlHistoryurls()

@@ -22,7 +22,7 @@ def runtimeSqli():
         utils.notify(config.time_sqli_result_file)
 
 
-
+@exception_handler
 def sqliWrapper():
     # runqsfuzzSqli(config.waybackurls_withquery_live_file,config.qsfuzz_sqli_template_path,config.qsfuzz_sqli_result_file)
     runtimeSqli()

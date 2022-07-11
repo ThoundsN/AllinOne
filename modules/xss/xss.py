@@ -19,7 +19,7 @@ def runKxss(urls_file:str,file_out):
     return
 
 
-
+@exception_handler
 def xssWrapper():
     runXsspy(config.merged_withqueryurl_file,config.xsspy_result_file)
     logger.log('INFO', f'xsspy results saved to  {config.xsspy_result_file}')

@@ -125,75 +125,49 @@ class AllInOne(object):
         self.mkDataDir()
         self.configLog()
 
-        try:
-            onefall.oneforallWrapper()
-        except:
-            log.logger.exception("onefall goes wrong ")
+        onefall.oneforallWrapper()
 
         # screenshot.webscreenshotWrapper()
         # masscan.masscanWrapper()
         # nmap.nmapWrapper()
         # ffuf.ffufWrapper()
         
-        try:
-            crawler.crawlerWrapper()
-        except:
-            log.logger.exception("crawler goes wrong ")
+        crawler.crawlerWrapper()
 
-        try:
-            gau.gauWrapper()
-        except:
-            log.logger.exception("gau goes wrong ")
+        gau.gauWrapper()
 
-
-        try:
+        if not config.skip_wayback:
+            try:
+                crawler_urls = utils.readFile(config.crawler_output)
+                wayback_query_live_urls = utils.readFile(config.waybackurls_withquery_live_file)
+                merged_urls = set(crawler_urls+wayback_query_live_urls)
+                utils.writeFile(merged_urls,config.merged_withqueryurl_file)
+                utils.dedupeUrlsWithqeury(config.raw_merged_withqueryurl_file,config.merged_withqueryurl_file)
+            except:
+                log.logger.exception("merge query urls file goes wrong ")
+        else:
             crawler_urls = utils.readFile(config.crawler_output)
-            wayback_query_live_urls = utils.readFile(config.waybackurls_withquery_live_file)
-            merged_urls = set(crawler_urls+wayback_query_live_urls)
-            utils.writeFile(merged_urls,config.merged_withqueryurl_file)
-            utils.dedupeUrlsWithqeury(config.raw_merged_withqueryurl_file,config.merged_withqueryurl_file)
-        except:
-            log.logger.exception("merge query urls file goes wrong ")
-            
-
+            utils.writeFile(crawler_urls,config.merged_withqueryurl_file)
 
 
         if not config.skip_wayback_jsfiles and not config.skip_wayback:
-            try: 
-                jsentropy.dumpsterDriverWrapper()
-            excpet:
-                log.logger.exception("jsentropy goes wrong ")
+            jsentropy.dumpsterDriverWrapper()
 
-            try: 
-                jsfirebase.jsfirebaseWrapper()
-            excpet:
-                log.logger.exception("jsfirebase goes wrong ")
+            jsfirebase.jsfirebaseWrapper()
 
-        try: 
+
+
+        if isUrlqueryFileUseful(config.merged_withqueryurl_file):
             xss.xssWrapper()
-        excpet:
-            log.logger.exception("xss goes wrong ")       
 
-        try: 
             lfi.lfiWrapper()
-        excpet:
-            log.logger.exception("lfi goes wrong ")   
 
 
-        try: 
             crlf.crlfWrapper()
-        excpet:
-            log.logger.exception("crlf goes wrong ")   
 
-        try: 
             ssrf.ssrfWrapper()
-        excpet:
-            log.logger.exception("ssrf goes wrong ")   
 
-        try: 
             sqli.sqliWrapper()
-        excpet:
-            log.logger.exception("sqli goes wrong")                                       
 
 
     @staticmethod
